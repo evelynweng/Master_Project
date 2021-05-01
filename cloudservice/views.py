@@ -1,11 +1,7 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-
-# def detail(request, question_id):
-#    return HttpResponse("You're looking at question %s." % question_id)
-
-
+from helperfunction import dataHandler, doService
 
 @csrf_exempt 
 # Create your views here.
@@ -17,16 +13,46 @@ def index(request):
     Returns:
         HTTPResponse:
     """
-    # Uncomment this line to play with the database API
-    # play_with_database()
-    print(request, type(request))
+
+    # print(request, type(request))
 
 
     if request.method == "GET":
         return HttpResponse("this is GET method")
     elif request.method == "POST":
-        q = request.POST
-        l = list(q.values())
-        return HttpResponse(l[0])
+        
+        # get the dictionary from httpRequest->QueruDict->dict
+        recv_dict = request.POST.dict()
+
+        # get the label of service
+        VALIDTAG ="CMPE295"
+        SERVICETAG = "SERVICE"
+        SERVICE ={
+            'LOGIN': classmethod(doService.do_login),
+            'REGISTER': classmethod(doService.do_reg),
+            'MASK': classmethod(doService.do_detect),
+            'CHECKIN': classmethod(doService.do_checkin), 
+        }
+
+        ''' 
+        # dictionary field:
+            valid_tag + service_tag + items (different according to service)
+        '''
+        # check if the packet is valid packet.
+        # check if service(key) exist
+        # check type of service(value) exist
+        # be careful, if not find SERVICETAG first, recv_dict[SERVICETAG] will compiler error
+        if VALIDTAG not in recv_dict or not (SERVICETAG in recv_dict and recv_dict.get(SERVICETAG, default=None) in SERVICE):
+            return HttpResponseNotFound('<h1>illegal request</h1>')
+        
+        
+        request_service = recv_dict[SERVICETAG] # str: login, register, mask
+        response = SERVICE.get(request_service, classmethod(doService.do_nothing))(recv_dict)  # forward to designate service module, default: donothing
+        
+        return response
+
+
+
+
 
 

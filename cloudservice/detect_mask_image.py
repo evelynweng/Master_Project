@@ -9,7 +9,7 @@ from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
 
 
-def detect_mask(image_path):
+def detect_mask(image_in):
     # load openCV's pretrained face detector model
 
     # print("loading face detector")
@@ -23,7 +23,7 @@ def detect_mask(image_path):
     maskDetector = load_model('mask_detector/mask_detector.model')
 
     # load input image
-    image = cv2.imread('images/example_01.jpg')
+    image = cv2.imread(image_in)
     # get the image height and width
     (h, w) = image.shape[:2]
 
@@ -63,9 +63,9 @@ def detect_mask(image_path):
 
             # return result
             maskDetected = True if mask > noMask else False
-            probability = max(mask, noMask) * 100
+            # probability = max(mask, noMask) * 100
             
-            return maskDetected, probability
+            return maskDetected
         
 #result = detect_mask('images/example_01.jpg')
 #print(result)

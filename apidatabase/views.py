@@ -26,7 +26,7 @@ def index(request):
         return HttpResponse(l[0])
 
 def play_with_database():
-    from apidatabase.models import Store, Queue
+    from models import Store, Queue
 
     print("=========================================")
     print("Show all Stores after creating KFC")
