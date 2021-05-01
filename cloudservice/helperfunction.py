@@ -94,8 +94,9 @@ class doService:
 
         # get bool by : temperature
             # currently passing
+        pass_temp = True
         
-        if pass_mask : # if pass_mask and pass_temp: 
+        if pass_mask and pass_temp : 
             # both True: check strore capacity
             # call apidatabase.entry_validation
             query_capacity = {keyStoreid:store_id, keyService: serviceEntry}
@@ -105,7 +106,7 @@ class doService:
                 # return HttpResponse
             if can_enter :
                 reply_dict = {keyReply:can_enter}
-                return datahandler.dict_to_HttpResponse(reply_dict)
+
                 # False:
                     # call queue function get qrcode.img
                     # encode qecode.img 
@@ -116,12 +117,11 @@ class doService:
                 qrcode_str = queuehandler.get_qrcode(get_qrcode_dict)
                 reply_dict = {keyReply:can_enter, keyQrcode: qrcode_str}
 
-                return datahandler.dict_to_HttpResponse(reply_dict)
-
         # False fail pass mask: return HttpResponse
         else:
             reply_dict = {keyReply:can_enter}
-            return datahandler.dict_to_HttpResponse(reply_dict)
+        
+        return datahandler.dict_to_HttpResponse(reply_dict)
 
     def do_checkin(self,input_dict) -> HttpResponse:
         return HttpResponse("not use")
