@@ -23,7 +23,9 @@ def detect_mask(image_in):
     maskDetector = load_model('mask_detector/mask_detector.model')
 
     # load input image
-    image = cv2.imread(image_in)
+    # image = cv2.imread(image_in)
+    img_as_np = np.frombuffer(image_in, dtype=np.uint8)
+    image = cv2.imdecode(img_as_np, flags=1)
     # get the image height and width
     (h, w) = image.shape[:2]
 
