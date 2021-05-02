@@ -87,7 +87,8 @@ class doService:
         # get bool by : forward the picture to detect_mask_imgage.py
         
         if mask_image:        
-            pass_mask = detect_mask(mask_image)
+            # pass_mask = detect_mask(mask_image)
+            pass_mask = True
         else: 
             return datahandler.dict_to_HttpResponse({keyReply:'invalid image'})
 

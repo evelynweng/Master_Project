@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from helperfunction import dataHandler, doService
+from .helperfunction import dataHandler, doService
 
 @csrf_exempt 
 # Create your views here.
