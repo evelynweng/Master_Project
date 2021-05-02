@@ -23,4 +23,5 @@ urlpatterns = [
     path('apidatabase/', include('apidatabase.urls')),
     path('queueweb/', include('queueweb.urls')),
     path('uiweb/', include('uiweb.urls')),
+    path('', include('uiweb.urls')),
 ]

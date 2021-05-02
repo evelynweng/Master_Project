@@ -1,16 +1,34 @@
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
-# Django will 
+# Django will
 #   1) Creaet database tables(schemas) `Store` and `Queue`
 #   2) Create a Python database-access API for accessing `Store` and `Queue` tables
 #
 # Refer to the page for support fields in Django
 # https://docs.djangoproject.com/en/3.1/ref/models/fields/#field-types
+
+
 class Store(models.Model):
-    store_id  =  models.AutoField(primary_key=True)
-    store_name = models.TextField(max_length=200)
-    store_phone =  models.PositiveIntegerField(blank=True, null=True)
+
+    '''  store_id = models.AutoField(primary_key=True)
+     store_name = models.TextField(max_length=200)
+     store_phone = models.PositiveIntegerField(blank=True, null=True)
+
+     '''
+    store_id = models.AutoField(primary_key=True)
+    store_name = models.CharField(max_length=30,)
+    owner_first_name = models.CharField(max_length=30)
+    owner_last_name = models.CharField(max_length=30)
+    store_phone = models.CharField(max_length=12)
+    email = models.EmailField(max_length=100)
+    store_url = models.URLField(max_length=200)
+    store_address = models.CharField(max_length=100)
+    registration_date = models.DateTimeField(auto_now_add=True)
+    # registration_date = models.DateField(default=date.today)
+    store_capacity = models.IntegerField()
+    password = models.CharField(max_length=30)
 
     def __str__(self):
         """Make the representation of a Store object readable."""
@@ -18,9 +36,8 @@ class Store(models.Model):
 
 
 class Queue(models.Model):
-    queue_id = models.AutoField(primary_key=True,blank=True, default = 0)
+    queue_id = models.AutoField(primary_key=True, blank=True, default=0)
     store_id = models.PositiveIntegerField(blank=True, null=True)
-
 
     def __str__(self):
         """Make the representation of a Queue object readable."""
