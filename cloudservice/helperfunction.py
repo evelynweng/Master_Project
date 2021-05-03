@@ -1,9 +1,10 @@
-import json
-import base64
+
 from django.http import HttpResponse, HttpResponseNotFound
-import requests
 from .detect_mask_image import detect_mask
 
+import base64
+import json
+import requests
 
 # key to database
 keyService = 'SERVICE'

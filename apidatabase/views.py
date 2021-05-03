@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+import json
 
 
 @csrf_exempt 
@@ -21,9 +22,19 @@ def index(request):
     if request.method == "GET":
         return HttpResponse("this is GET method")
     elif request.method == "POST":
-        q = request.POST
-        l = list(q.values())
-        return HttpResponse(l[0])
+
+        VALIDTAG ="CMPE295"
+        SERVICETAG = "SERVICE"
+        SERVICE ={
+            'LOGIN': classmethod(doService.do_login),
+            'REGISTER': classmethod(doService.do_reg),
+            'MASK': classmethod(doService.do_detect),
+            'CHECKIN': classmethod(doService.do_checkin), 
+        }
+
+        temp_reply = {"REPLY": True}
+        json_string = json.dumps(temp_reply)
+        return HttpResponse(json_string, content_type =  "text/html; charset=utf-8")
 
 def play_with_database():
     from models import Store, Queue
