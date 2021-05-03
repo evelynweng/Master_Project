@@ -22,7 +22,9 @@ keyMaskpic = 'mask_pic'
 
 
 class dataHandler:
-    API_LOCATION  = "http://localhost:8080/apidatabase/"
+    def __init__(self):
+        self.API_LOCATION  = "http://localhost:8080/apidatabase/"
+    
     def dict_to_HttpResponse(self, input_dict) -> HttpResponse :
         json_string = json.dumps(input_dict)
         return HttpResponse(json_string, content_type =  "text/html; charset=utf-8")
@@ -35,10 +37,10 @@ class dataHandler:
         return base64.b64encode(image)
     
     def get_database_httpresponse(self, input_dict):
-        return requests.post(url = API_LOCATION, data = input_dict)
+        return requests.post(url = self.API_LOCATION, data = input_dict)
 
     def get_database_dictresponse(self, input_dict):
-        reply_http = requests.post(url = API_LOCATIOn, data = input_dict)
+        reply_http = requests.post(url = self.API_LOCATION, data = input_dict)
         reply_dict = json.loads(reply_http.content)
         return reply_dict
 
@@ -58,40 +60,41 @@ class dataHandler:
 
 class queueHandler:
     def queue_status(self, input_dict) -> bool :
-        reply_dict = classmethod(dataHandler.get_database_dictresponse)(input_dict)
-        can_enter = reply_dict.get(keyReply, default=False)
-        return can_enter
+        reply_dict = dataHandler().get_database_dictresponse(input_dict)
+        can_enter = reply_dict.get(keyReply,False)
+        #return can_enter
+        return True
     
     def get_qrcode(self, input_dict) -> str:
         encode_qrcode_string = 'need to process'
         return encode_qrcode_string
 
 class doService:
-    
-    datahandler = dataHandler()
-    queuehandler = queueHandler()
+    def __init__(self):
+        self.datahandler = dataHandler()
+        self.queuehandler = queueHandler()
     
     def do_login(self,input_dict) -> HttpResponse:
         #call log-in api in database 
         
-        return datahandler.get_database_httpresponse(input_dict)
+        return self.datahandler.get_database_httpresponse(input_dict)
 
     def do_reg(self,input_dict) -> HttpResponse:
         # call register api in database
-        return dataHandler.get_database_httpresponse(input_dict)
+        return self.dataHandler.get_database_httpresponse(input_dict)
         
     def do_detect(self,input_dict) -> HttpResponse:
         # get value from input dict, assume no error
         store_id = input_dict.get(keyStoreid)
-        mask_image = datahandler.encodeImg_to_img(input_dict.get(keyMaskpic))
+        mask_image = self.datahandler.encodeImg_to_img(input_dict.get(keyMaskpic))
 
         # get bool by : forward the picture to detect_mask_imgage.py
         
         if mask_image:        
-            # pass_mask = detect_mask(mask_image)
-            pass_mask = True
+            pass_mask = detect_mask(mask_image)
+            # pass_mask = True
         else: 
-            return datahandler.dict_to_HttpResponse({keyReply:'invalid image'})
+            return self.datahandler.dict_to_HttpResponse({keyReply:'invalid image'})
 
 
         # get bool by : temperature
@@ -102,7 +105,7 @@ class doService:
             # both True: check strore capacity
             # call apidatabase.entry_validation
             query_capacity = {keyStoreid:store_id, keyService: serviceEntry}
-            can_enter = queuehandler.queue_status(query_capacity)
+            can_enter = self.queuehandler.queue_status(query_capacity)
             # True: 
                 # accumulate capacity at database api
                 # return HttpResponse
@@ -116,18 +119,18 @@ class doService:
                     # retun HttpResponse
             else:
                 get_qrcode_dict = {'SERVICE':qrCode, 'store_id': store_id, }
-                qrcode_str = queuehandler.get_qrcode(get_qrcode_dict)
+                qrcode_str = self.queuehandler.get_qrcode(get_qrcode_dict)
                 reply_dict = {keyReply:can_enter, keyQrcode: qrcode_str}
 
         # False fail pass mask: return HttpResponse
         else:
             reply_dict = {keyReply:can_enter}
         
-        return datahandler.dict_to_HttpResponse(reply_dict)
+        return self.datahandler.dict_to_HttpResponse(reply_dict)
 
     def do_checkin(self,input_dict) -> HttpResponse:
         return HttpResponse("not use")
 
     def do_nothing(self, input_dict) -> HttpResponse :
         reply_dict = {keyReply:False}
-        return classmethod(dataHandler.dict_to_HttpResponse)(reply_dict)
+        return self.dataHandler.dict_to_HttpResponse(reply_dict)

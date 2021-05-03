@@ -7,22 +7,15 @@ import json
 @csrf_exempt 
 # Create your views here.
 def index(request):
-    """Engress point of the cloudservice application
-    Args:
-        request (WSGIRequest): https://github.com/django/django/blob/main/django/core/handlers/wsgi.py#L64
-
-    Returns:
-        HTTPResponse:
-    """
+    
     # Uncomment this line to play with the database API
     # play_with_database()
     print(request, type(request))
 
-
     if request.method == "GET":
         return HttpResponse("this is GET method")
     elif request.method == "POST":
-
+        '''
         VALIDTAG ="CMPE295"
         SERVICETAG = "SERVICE"
         SERVICE ={
@@ -31,7 +24,7 @@ def index(request):
             'MASK': classmethod(doService.do_detect),
             'CHECKIN': classmethod(doService.do_checkin), 
         }
-
+        '''
         temp_reply = {"REPLY": True}
         json_string = json.dumps(temp_reply)
         return HttpResponse(json_string, content_type =  "text/html; charset=utf-8")

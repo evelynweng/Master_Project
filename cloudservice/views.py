@@ -28,10 +28,10 @@ def index(request):
         VALIDTAG ="CMPE295"
         SERVICETAG = "SERVICE"
         SERVICE ={
-            'LOGIN': classmethod(doService.do_login),
-            'REGISTER': classmethod(doService.do_reg),
-            'MASK': classmethod(doService.do_detect),
-            'CHECKIN': classmethod(doService.do_checkin), 
+            'LOGIN': doService().do_login,
+            'REGISTER': doService().do_reg,
+            'MASK': doService().do_detect,
+            'CHECKIN': doService().do_checkin, 
         }
 
         ''' 
@@ -42,12 +42,12 @@ def index(request):
         # check if service(key) exist
         # check type of service(value) exist
         # be careful, if not find SERVICETAG first, recv_dict[SERVICETAG] will compiler error
-        if VALIDTAG not in recv_dict or not (SERVICETAG in recv_dict and recv_dict.get(SERVICETAG, default=None) in SERVICE):
+        if VALIDTAG not in recv_dict or not (SERVICETAG in recv_dict and recv_dict.get(SERVICETAG, None) in SERVICE):
             return HttpResponseNotFound('<h1>illegal request</h1>')
         
         
         request_service = recv_dict[SERVICETAG] # str: login, register, mask
-        response = SERVICE.get(request_service, classmethod(doService.do_nothing))(recv_dict)  # forward to designate service module, default: donothing
+        response = SERVICE.get(request_service, doService().do_nothing)(recv_dict)  # forward to designate service module, default: donothing
         
         return response
 
