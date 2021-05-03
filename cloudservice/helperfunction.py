@@ -31,7 +31,7 @@ class dataHandler:
     def httpresponse_to_Dict(self, httpresponse):
         httpresponse.cont
     def encodeImg_to_img(self, img_encode_str):
-        return base64.b64decode(img_encode_str) 
+        return base64.b64decode(img_encode_str+"========") 
 
     def img_to_encodeImg(self, image):
         return base64.b64encode(image)

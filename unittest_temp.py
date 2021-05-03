@@ -15,7 +15,6 @@ class TestCloudservice(unittest.TestCase):
         json_string = json.dumps(input_dict)
         r= HttpResponse(json_string, content_type =  "text/html; charset=utf-8")
         get_test = BuidTestServiceRequest().mask()
-
         self.assertEqual(get_test.content, r.content)
        
 
@@ -30,12 +29,13 @@ class BuidTestServiceRequest:
         self.API_LOCATION  = "http://localhost:8080/cloudservice/"
     
     def mask(self) -> HttpResponse:
-
+    
         with open('example_01.jpg', "rb") as image_file:
                 img_str = base64.b64encode(image_file.read())
+        print(type(img_str))
         # img = cv2.imread('example_01.jpg')
         # img_str = base64.b64encode(img)
-        send_dict = {self.VALIDTAG : 295, self.SERVICETAG:'MASK',self.STOREID:111, self.MASKPIC:img_str}
+        send_dict = {self.VALIDTAG : 295, self.SERVICETAG:'MASK',self.STOREID:111, self.MASKPIC:"img_str"}
         return requests.post(url = self.API_LOCATION, data = send_dict)
 
 
