@@ -31,8 +31,10 @@ class BuidTestServiceRequest:
     
     def mask(self) -> HttpResponse:
 
-        img = cv2.imread('example_01.jpg')
-        img_str = base64.b64encode(img)
+        with open('example_01.jpg', "rb") as image_file:
+                img_str = base64.b64encode(image_file.read())
+        # img = cv2.imread('example_01.jpg')
+        # img_str = base64.b64encode(img)
         send_dict = {self.VALIDTAG : 295, self.SERVICETAG:'MASK',self.STOREID:111, self.MASKPIC:img_str}
         return requests.post(url = self.API_LOCATION, data = send_dict)
 
