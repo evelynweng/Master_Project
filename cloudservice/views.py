@@ -2,6 +2,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from .helperfunction import dataHandler, doService
+import json
 
 @csrf_exempt 
 # Create your views here.
@@ -23,6 +24,13 @@ def index(request):
         
         # get the dictionary from httpRequest->QueruDict->dict
         recv_dict = request.POST.dict()
+        #q_dict = request.POST
+        #print(q_dict)
+        #l= list(q_dict.values())
+        #recv_dict = json.loads(l[0])
+                                
+        # json_dict = request.POST.get()
+        # recv_dict = json.loads(json_dict)
 
         # get the label of service
         VALIDTAG ="CMPE295"

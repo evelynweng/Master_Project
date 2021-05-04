@@ -129,7 +129,7 @@ class doService:
 
         # False fail pass mask: return HttpResponse
         else:
-            reply_dict = {keyReply:can_enter}
+            reply_dict = {keyReply:False}
         
         return self.datahandler.dict_to_HttpResponse(reply_dict)
 
