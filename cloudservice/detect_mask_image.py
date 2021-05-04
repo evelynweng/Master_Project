@@ -9,7 +9,7 @@ from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
 
 
-def detect_mask(image_in):
+def detect_mask(image):
     # load openCV's pretrained face detector model
 
     # print("loading face detector")
@@ -23,13 +23,13 @@ def detect_mask(image_in):
     # load trained mask detector model
 
     # print("loading mask detector")
-    # maskModelPath = join(dirname(__file__), "mask_detector/mask_detector.model")
+    maskModelPath = join(dirname(__file__), "mask_detector/mask_detector.model")
     maskDetector = load_model(maskModelPath)
 
     # load input image
     # image = cv2.imread(image_in)
-    img_as_np = np.frombuffer(image_in, dtype=np.uint8)
-    image = cv2.imdecode(img_as_np, flags=1)
+    # img_as_np = np.frombuffer(image_in, dtype=np.uint8)
+    # image = cv2.imdecode(img_as_np, flags=1)
     # get the image height and width
     (h, w) = image.shape[:2]
 

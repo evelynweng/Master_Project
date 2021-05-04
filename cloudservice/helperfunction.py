@@ -5,6 +5,8 @@ from .detect_mask_image import detect_mask
 import base64
 import json
 import requests
+import numpy as np
+import cv2
 
 # key to database
 keyService = 'SERVICE'
@@ -31,7 +33,10 @@ class dataHandler:
     def httpresponse_to_Dict(self, httpresponse):
         httpresponse.cont
     def encodeImg_to_img(self, img_encode_str):
-        return base64.b64decode(img_encode_str+"========") 
+        img = base64.b64decode(img_encode_str)  
+        npimg = np.fromstring(img, dtype=np.uint8)
+        cv2img = cv2.imdecode(npimg, 1)
+        return cv2img
 
     def img_to_encodeImg(self, image):
         return base64.b64encode(image)
@@ -87,10 +92,10 @@ class doService:
         # get value from input dict, assume no error
         store_id = input_dict.get(keyStoreid)
         mask_image = self.datahandler.encodeImg_to_img(input_dict.get(keyMaskpic))
-
+        
         # get bool by : forward the picture to detect_mask_imgage.py
         
-        if mask_image:        
+        if mask_image.any():        
             pass_mask = detect_mask(mask_image)
             # pass_mask = True
         else: 
