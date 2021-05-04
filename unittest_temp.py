@@ -10,12 +10,20 @@ from django.http import HttpResponse, HttpResponseNotFound
 
 class TestCloudservice(unittest.TestCase):
 
-    def test_mask(self):
+    def test_mask_true(self):
         input_dict = {'REPLY':True}
         json_string = json.dumps(input_dict)
         r= HttpResponse(json_string, content_type =  "text/html; charset=utf-8")
-        get_test = BuidTestServiceRequest().mask()
+        get_test = BuidTestServiceRequest().mask_true()
         # print(get_test.content)
+        self.assertEqual(get_test.content, r.content)
+    
+    def test_mask_false(self):
+        input_dict = {'REPLY':False}
+        json_string = json.dumps(input_dict)
+        r= HttpResponse(json_string, content_type =  "text/html; charset=utf-8")
+        get_test = BuidTestServiceRequest().mask_false()
+        print(get_test.content)
         self.assertEqual(get_test.content, r.content)
        
 
@@ -29,14 +37,18 @@ class BuidTestServiceRequest:
         self.REPLYTAG = 'REPLY'
         self.API_LOCATION  = "http://localhost:8080/cloudservice/"
     
-    def mask(self) -> HttpResponse:
+    def mask_true(self) -> HttpResponse:
         
-        with open('example_01.jpg', "rb") as image_file:
+        with open('test.jpg', "rb") as image_file:
             img_str = base64.b64encode(image_file.read())
-
-    
         send_dict = {self.VALIDTAG : 295, self.SERVICETAG:'MASK',self.STOREID:111, self.MASKPIC:img_str}
+        return requests.post(url = self.API_LOCATION, data = send_dict)
+    
+    def mask_false(self) -> HttpResponse:
         
+        with open('test02.jpg', "rb") as image_file:
+            img_str = base64.b64encode(image_file.read())
+        send_dict = {self.VALIDTAG : 295, self.SERVICETAG:'MASK',self.STOREID:111, self.MASKPIC:img_str}       
         return requests.post(url = self.API_LOCATION, data = send_dict)
 
 

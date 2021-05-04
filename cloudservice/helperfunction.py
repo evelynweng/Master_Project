@@ -31,7 +31,8 @@ class dataHandler:
         json_string = json.dumps(input_dict)
         return HttpResponse(json_string, content_type =  "text/html; charset=utf-8")
     def httpresponse_to_Dict(self, httpresponse):
-        httpresponse.cont
+        return json.loads(httpresponse.content)
+        
     def encodeImg_to_img(self, img_encode_str):
         img = base64.b64decode(img_encode_str)  
         npimg = np.fromstring(img, dtype=np.uint8)
@@ -106,6 +107,7 @@ class doService:
             # currently passing
         pass_temp = True
         
+        can_enter = False
         if pass_mask and pass_temp : 
             # both True: check strore capacity
             # call apidatabase.entry_validation
