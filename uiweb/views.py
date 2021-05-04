@@ -5,6 +5,7 @@ from django.contrib import messages
 #from .models import Store
 from apidatabase.models import Store
 from .forms import StoreRegistrationForm, LoginForm
+from .decorators import user_login_required
 
 # def detail(request, question_id):
 #    return HttpResponse("You're looking at question %s." % question_id)
@@ -33,10 +34,16 @@ def index(request):
         l = list(q.values())
         return HttpResponse(l[0])
  '''
-
+#@user_login_required
 def home(request):
-    return render(request, 'uiweb/home.html')
+    if 'user_id' in request.session:
+        user = get_user(request)
+        return render(request, 'uiweb/home2.html', {'user': user}) #this is temporary page to show logout
+    else:
+        return render(request, 'uiweb/home.html',)    
 
+    ''' user = get_user(request)
+    return render(request, 'uiweb/home.html', {'user': user}) '''
 
 def about(request):
     return render(request, 'uiweb/about.html')        
@@ -48,11 +55,19 @@ def login(request):
         password = request.POST['password']
         if Store.objects.filter(email=email, password=password).exists():
             user = Store.objects.get(email=email)
-            # request.session['user_id'] = user.id # This is a session variable and will remain existing as long as you don't delete this manually or clear your browser cache
+            request.session['user_id'] = user.store_id # This is a session variable and will remain existing as long as you don't delete this manually or clear your browser cache
             return redirect('Home_Page')
         else:
             messages.warning(request, "Wrong email or password.\n Please try again.")
     return render(request, 'uiweb/login.html', {'form': form})
+
+def logout(request):
+    if 'user_id' in request.session:
+      del request.session['user_id'] # delete user session
+    return redirect('Login')    
+
+def get_user(request):
+     return Store.objects.get(store_id=request.session['user_id'])    
 
 def storeRegistration(request):
     if request.method == 'POST':
@@ -72,6 +87,9 @@ def storeRegistration(request):
 
 def registration_success(request):
     return render(request, 'uiweb/success.html')
+
+def profile(request):
+    return render(request, 'uiweb/profile.html')    
 
 
 
