@@ -1,7 +1,8 @@
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from .helperfunction import dataHandler, doService
+from .doservice import  doService
+from cloudservice.handlerclass.datahandler import dataHandler
 import json
 
 @csrf_exempt 

@@ -23,7 +23,7 @@ class TestCloudservice(unittest.TestCase):
         json_string = json.dumps(input_dict)
         r= HttpResponse(json_string, content_type =  "text/html; charset=utf-8")
         get_test = BuidTestServiceRequest().mask_false()
-        print(get_test.content)
+        #print(get_test.content)
         self.assertEqual(get_test.content, r.content)
        
 
