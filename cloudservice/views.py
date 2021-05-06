@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .doservice import  doService
 from cloudservice.handlerclass.datahandler import dataHandler
 import json
+from cloudservice.handlerclass.keyvaluefordict import *
 
 @csrf_exempt 
 # Create your views here.
@@ -22,19 +23,21 @@ def index(request):
     if request.method == "GET":
         return HttpResponse("this is GET method")
     elif request.method == "POST":
-        print("recv the request")
+
+        
+
         # get the dictionary from httpRequest->QueruDict->dict
         recv_dict = request.POST.dict()
-
+        print("recv the request")
         # get the label of service
-        VALIDTAG ="CMPE295"
-        SERVICETAG = "SERVICE"
+        VALIDTAG =kVALID
+        SERVICETAG = kSERVICE
         SERVICE ={
-            'LOGIN': doService().do_login,
-            'REGISTER': doService().do_reg,
-            'MASK': doService().do_detect,
-            'CHECKIN': doService().do_checkin,
-            'STARTDETEC': doService().do_start 
+            vLOGIN: doService().do_login,
+            vREGISTER: doService().do_reg,
+            vMASK: doService().do_detect,
+            vCHECKIN: doService().do_checkin,
+            vSTARTDETECT: doService().do_start 
         }
 
         ''' 
@@ -50,7 +53,7 @@ def index(request):
         
         print("get the service")
         request_service = recv_dict[SERVICETAG] # str: login, register, mask
-        print("send to the redirect function")
+        print("send to the redirect function:",request_service)
         response = SERVICE.get(request_service, doService().do_nothing)(recv_dict)  # forward to designate service module, default: donothing
         
         return response

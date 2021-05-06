@@ -38,7 +38,6 @@ vSTARTDETECT = 'STARTDETECT'
 
 # Database API replated
 vQUERYCAPACITY = 'ENTRY'
-serviceEntry = "ENTRY" #SERVICE
 
 
 # kSERVICE value to queue web application

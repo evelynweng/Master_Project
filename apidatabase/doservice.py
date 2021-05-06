@@ -16,13 +16,16 @@ class doService:
     def do_login(self):
         can_login = False # defult to false
         if self.STOREPHONE and self.PASSWORD:
-            qobj = Store.objects.filter(
+            print(self.STOREPHONE)
+            stores = Store.objects.filter(
                 store_phone = self.STOREPHONE, 
-                password = self.password
+                password = self.PASSWORD
                 )
-            if qobj.exists():
+        
+            if stores.exists():
+                store = stores.get()
                 can_login = True
-                store_id = qobj.store_id
+                store_id = store.store_id
                 reply_dict = {kREPLY:can_login, kSTOREID:store_id}
             else:
                 reply_dict = {kREPLY:can_login}
@@ -37,7 +40,8 @@ class doService:
             store_phone=self.STOREPHONE,
             defaults={
                 kPASSWORD:self.PASSWORD,
-                kSTORECAPACITY:self.STORECAPACITY
+                kSTORECAPACITY:self.STORECAPACITY,
+                'store_current_count' : 0,
                 },
             )
         store_id = _store.store_id 
@@ -48,23 +52,26 @@ class doService:
     def do_start(self):
         success_start = False 
         if self.STOREID:
-            qobj = Store.objects.filter(store_id = self.STORID)
-            qobj.store_current_count = 0
-            qobj.save() # reset store_current_count to zero
-            success_start = True
+            stores = Store.objects.filter(store_id = self.STOREID)
+            if stores.exists():
+                store = stores.get()
+                store.store_current_count = 0
+                store.save() # reset store_current_count to zero
+                success_start = True
         reply_dict = {kREPLY:success_start}
         return dataHandler().dict_to_HttpResponse(reply_dict)
         
     def do_query_capacity(self):
         can_enter = False
         if self.STOREID:
-            qobj = Store.objects.filter(store_id = self.STOREID)
-            if qobj.exists():
-                store_customer_after_enter = self.CUSTOMERS + qobj.store_current_count
-                if  store_customer_after_enter <= qobj.store_capacity:
+            stores = Store.objects.filter(store_id = self.STOREID)
+            if stores.exists():
+                store = stores.get()
+                store_customer_after_enter = self.CUSTOMERS + store.store_current_count
+                if  store_customer_after_enter <= store.store_capacity:
                     can_enter = True
-                    qobj.store_current_count = store_customer_after_enter
-                    qobj.save()
+                    store.store_current_count = store_customer_after_enter
+                    store.save()
         reply_dict = {kREPLY:can_enter}
         return dataHandler().dict_to_HttpResponse(reply_dict)
 

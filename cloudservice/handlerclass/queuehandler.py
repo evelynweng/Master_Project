@@ -5,7 +5,7 @@ from .keyvaluefordict import *
 
 class queueHandler:
     def queue_status(self, store_id) -> bool :
-        query_capacity = {keyStoreid:store_id, keyService: serviceEntry}
+        query_capacity = {keyStoreid:store_id, keyService: vQUERYCAPACITY}
         reply_dict = dataHandler().get_database_dictresponse(query_capacity)
         can_enter = reply_dict.get(keyReply,False)
         return can_enter

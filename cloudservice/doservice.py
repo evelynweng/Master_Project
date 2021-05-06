@@ -57,6 +57,7 @@ class doService:
         return HttpResponse("not use")
     
     def do_start(self, input_dict) -> HttpResponse:
+        print("send request to database")
         return self.datahandler.get_database_httpresponse(input_dict)
 
     def do_nothing(self, input_dict) -> HttpResponse :

@@ -21,7 +21,13 @@ class Store(models.Model):
 
     def __str__(self):
         """Make the representation of a Store object readable."""
-        return "{id}:{name}:".format(id=self.store_id, name=self.store_name)
+        return "{id}:{name}:{phone}:{password}:{capacity}".format(
+            id=self.store_id, 
+            name=self.store_name, 
+            phone=self.store_phone, 
+            password = self.password, 
+            capacity = self.store_capacity
+            )
 
 
 class Queue(models.Model):
