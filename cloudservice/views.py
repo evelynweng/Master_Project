@@ -22,16 +22,9 @@ def index(request):
     if request.method == "GET":
         return HttpResponse("this is GET method")
     elif request.method == "POST":
-        
+        print("recv the request")
         # get the dictionary from httpRequest->QueruDict->dict
         recv_dict = request.POST.dict()
-        #q_dict = request.POST
-        #print(q_dict)
-        #l= list(q_dict.values())
-        #recv_dict = json.loads(l[0])
-                                
-        # json_dict = request.POST.get()
-        # recv_dict = json.loads(json_dict)
 
         # get the label of service
         VALIDTAG ="CMPE295"
@@ -40,7 +33,8 @@ def index(request):
             'LOGIN': doService().do_login,
             'REGISTER': doService().do_reg,
             'MASK': doService().do_detect,
-            'CHECKIN': doService().do_checkin, 
+            'CHECKIN': doService().do_checkin,
+            'STARTDETEC': doService().do_start 
         }
 
         ''' 
@@ -54,8 +48,9 @@ def index(request):
         if VALIDTAG not in recv_dict or not (SERVICETAG in recv_dict and recv_dict.get(SERVICETAG, None) in SERVICE):
             return HttpResponseNotFound('<h1>illegal request</h1>')
         
-        
+        print("get the service")
         request_service = recv_dict[SERVICETAG] # str: login, register, mask
+        print("send to the redirect function")
         response = SERVICE.get(request_service, doService().do_nothing)(recv_dict)  # forward to designate service module, default: donothing
         
         return response

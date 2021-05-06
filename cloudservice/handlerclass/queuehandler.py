@@ -2,7 +2,6 @@
 from .datahandler import dataHandler
 from .keyvaluefordict import *
 
-qrCode = 'QRCODE'
 
 class queueHandler:
     def queue_status(self, store_id) -> bool :

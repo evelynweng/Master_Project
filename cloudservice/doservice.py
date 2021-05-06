@@ -22,7 +22,8 @@ class doService:
 
     def do_reg(self,input_dict) -> HttpResponse:
         # call register api in database
-        return self.dataHandler.get_database_httpresponse(input_dict)
+        print("enter do_reg sent to datahandler")
+        return self.datahandler.get_database_httpresponse(input_dict)
         
     def do_detect(self,input_dict) -> HttpResponse:
         store_id = self.datahandler.get_store_id(input_dict)
@@ -54,6 +55,9 @@ class doService:
 
     def do_checkin(self,input_dict) -> HttpResponse:
         return HttpResponse("not use")
+    
+    def do_start(self, input_dict) -> HttpResponse:
+        return self.datahandler.get_database_httpresponse(input_dict)
 
     def do_nothing(self, input_dict) -> HttpResponse :
         reply_dict = {keyReply:False}

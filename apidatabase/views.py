@@ -1,6 +1,8 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+
+from .doservice import  doService
 import json
 
 
@@ -10,24 +12,30 @@ def index(request):
     
     # Uncomment this line to play with the database API
     # play_with_database()
-    print(request, type(request))
-
+    
     if request.method == "GET":
         return HttpResponse("this is GET method")
     elif request.method == "POST":
-        '''
-        VALIDTAG ="CMPE295"
+        print('database recv request')
+
+        recv_dict = request.POST.dict()
+
         SERVICETAG = "SERVICE"
         SERVICE ={
-            'LOGIN': classmethod(doService.do_login),
-            'REGISTER': classmethod(doService.do_reg),
-            'MASK': classmethod(doService.do_detect),
-            'CHECKIN': classmethod(doService.do_checkin), 
+            'LOGIN': doService(recv_dict).do_login,
+            'REGISTER':doService(recv_dict).do_reg,
+            'STARTDETECT': doService(recv_dict).do_start,
+            'ENTRY': doService(recv_dict).do_query_capacity,
         }
-        '''
-        temp_reply = {"REPLY": True}
-        json_string = json.dumps(temp_reply)
-        return HttpResponse(json_string, content_type =  "text/html; charset=utf-8")
+        
+        if not (SERVICETAG in recv_dict and recv_dict.get(SERVICETAG, None) in SERVICE):
+            return HttpResponseNotFound('<h1>illegal request</h1>')
+        
+        request_service = recv_dict[SERVICETAG] # str: login, register, mask
+        print('redirect request to database api')
+        response = SERVICE.get(request_service, doService(recv_dict).do_nothing)()  # forward to designate service module, default: donothing
+        print("database http respond content:", response.content)
+        return response
 
 def play_with_database():
     from models import Store, Queue
@@ -68,3 +76,5 @@ def play_with_database():
     print("Delete all items from Store")
     Store.objects.all().delete()
     print(Store.objects.all())
+
+    

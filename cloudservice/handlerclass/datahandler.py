@@ -28,11 +28,15 @@ class dataHandler:
         return base64.b64encode(image)
     
     def get_database_httpresponse(self, input_dict):
-        return requests.post(url = self.API_LOCATION, data = input_dict)
+        print("send to database")
+        r = requests.post(url = self.API_LOCATION, data = input_dict)
+        send_dict = self.httpresponse_to_Dict(r)
+        return self.dict_to_HttpResponse(send_dict)
 
     def get_database_dictresponse(self, input_dict):
         reply_http = requests.post(url = self.API_LOCATION, data = input_dict)
         reply_dict = json.loads(reply_http.content)
+        print("reply_dict from database:",reply_dict)
         return reply_dict
     
     # easy get
