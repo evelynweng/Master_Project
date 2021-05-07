@@ -1,69 +1,87 @@
 package com.cmpe295.customercontrolapp
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
-import com.cmpe295.customercontrolapp.R
-import com.google.firebase.auth.FirebaseAuth
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import retrofit2.Retrofit
+import com.cmpe295.customercontrolapp.Session.Companion.storeID
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        auth = FirebaseAuth.getInstance();
-
-
         btnLogin.setOnClickListener {
-/*
-            if(edUsername.text.trim().isNotEmpty() || edPassword.text.trim().isNotEmpty()){
-                //
-                signInUser();
-
+            if(edPhoneNumber.text.isNotEmpty() && edPassword.text.isNotEmpty()){
+                Log.d("print", "sending login request...")
+                loginUser();
             }else{
-                Toast.makeText(this,"Input required",Toast.LENGTH_LONG).show()
-
-            }*/
-
-            signInUser();
+                Toast.makeText(this, "Input required", Toast.LENGTH_LONG).show()
+            }
         }
 
         tvRegister.setOnClickListener {
-            Toast.makeText(this,"test",Toast.LENGTH_LONG).show()
-          val intent = Intent(this, RegisterActivity::class.java);
+            val intent = Intent(this, RegisterActivity::class.java);
             startActivity(intent)
         }
     }
 
-    fun signInUser(){
-        /*auth.signInWithEmailAndPassword(edUsername.text.trim().toString(),edPassword.text.trim().toString())
-            .addOnCompleteListener (this) {
-                task ->
-                if(task.isSuccessful){
-                    val intent = Intent(this,DashboardActivity::class.java);
-                    startActivity(intent);
-                }else{
-                    Toast.makeText(this,"Authentication Error "+task.exception, Toast.LENGTH_LONG).show()
+    private fun loginUser() {
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://192.168.1.133:8080")
+            .build()
+
+        val service = retrofit.create(APIService::class.java)
+        val params = HashMap<String?, String?>()
+
+        params["CMPE295"] = "295"
+        params["SERVICE"] = "LOGIN"
+        params["store_phone"] = edPhoneNumber.text.toString()
+        params["password"] = edPassword.text.toString()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = service.postRequest(params)
+
+            withContext(Dispatchers.Main) {
+                if (response.isSuccessful) {
+                    val json = JSONObject(response.body()!!.string())
+                    Log.d("print", json.getString("REPLY"))
+                    if (json.getBoolean("REPLY")) {
+                        storeID = json.getInt("store_id")
+                        successfulLogin()
+                    } else
+                        badLogin()
+                } else {
+                    Log.d("print", response.code().toString())
+                    error()
                 }
-            }*/
+            }
+        }
+    }
+
+    private fun successfulLogin() {
+        Log.d("print", storeID.toString())
 
         val intent = Intent(this, DashboardActivity::class.java);
         startActivity(intent);
     }
 
-    override fun onStart() {
-        super.onStart()
-        val user = auth.currentUser;
-//        if(user != null){
-//            val intent = Intent(this,DashboardActivity::class.java);
-//            startActivity(intent)
-//
-//        }else{
-//            Toast.makeText(this,"User first time login",Toast.LENGTH_LONG).show()
-//        }
+    private fun badLogin() {
+        Toast.makeText(this, "Invalid Login Credentials", Toast.LENGTH_LONG).show()
     }
+
+    private fun error() {
+        Toast.makeText(this, "Couldn't connect to server", Toast.LENGTH_LONG).show()
+    }
+
 }

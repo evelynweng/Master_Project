@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:727791930860:android:ad263b448376bdf19444c9",
         "android_client_info": {
-          "package_name": "net.larntech.myfirstapp"
+          "package_name": "com.cmpe295.customercontrolapp"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "727791930860-vvccqrd1vaodlbq5ntofus54v7ievakk.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "net.larntech.myfirstapp",
+            "package_name": "com.cmpe295.customercontrolapp",
             "certificate_hash": "e722ac2d06ed2c2846a3dfb89b0257d3e07ea39a"
           }
         },

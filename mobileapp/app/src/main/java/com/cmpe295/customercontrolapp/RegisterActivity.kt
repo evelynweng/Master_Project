@@ -1,34 +1,38 @@
 package com.cmpe295.customercontrolapp
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.widget.Toast
-import com.google.firebase.auth.FirebaseAuth
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
 import kotlinx.android.synthetic.main.activity_register.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.Retrofit
+import java.io.ByteArrayOutputStream
 
 class RegisterActivity : AppCompatActivity() {
-    private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        auth = FirebaseAuth.getInstance();
-
-
         btnRegister.setOnClickListener {
-
-            if(editEmail.text.isNotEmpty() || editCPassword.text.isNotEmpty() || editPassword.text.isNotEmpty()){
+            if(editStoreName.text.isEmpty() || editPhoneNumber.text.isEmpty() || editCapacity.text.isEmpty()
+                || editPassword.text.isEmpty() || editConfirmPassword.text.isEmpty()) {
+                Toast.makeText(this,"All Input Fields Required", Toast.LENGTH_LONG).show()
+            } else if (!editPassword.text.toString().equals(editConfirmPassword.text.toString())) {
+                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_LONG).show()
+            } else {
                 registerUser();
-
-            }else{
-                Toast.makeText(this,"Input Required", Toast.LENGTH_LONG).show()
-
             }
-
         }
-
 
         tvLogin.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java);
@@ -36,38 +40,43 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    fun registerUser(){
+    private fun registerUser() {
 
-        auth.createUserWithEmailAndPassword(editEmail.text.trim().toString(), editPassword.text.trim().toString())
-            .addOnCompleteListener (this) {
-                task ->
-                if(task.isSuccessful){
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://192.168.1.133:8080")
+            .build()
 
-                    Toast.makeText(this,"Register successful",Toast.LENGTH_LONG).show()
+        val service = retrofit.create(APIService::class.java)
+        val params = HashMap<String?, String?>()
 
-                }else{
+        editCapacity.text.toString()
 
-                    Toast.makeText(this,"Register failed "+task.exception,Toast.LENGTH_LONG).show()
+        params["CMPE295"] = "295"
+        params["SERVICE"] = "REGISTER"
+        params["store_phone"] = editPhoneNumber.text.toString()
+        params["store_name"] = editStoreName.text.toString()
+        params["password"] = editPassword.text.toString()
+        params["store_capacity"] = editCapacity.text.toString()
 
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = service.postRequest(params)
 
+            withContext(Dispatchers.Main) {
+                if (response.isSuccessful) {
+
+                    val gson = GsonBuilder().setPrettyPrinting().create()
+                    val prettyJson = gson.toJson(
+                        JsonParser.parseString(
+                            response.body()
+                                ?.string()
+                        )
+                    )
+                    Log.d("print", prettyJson)
+                } else {
+                    Log.d("print", response.code().toString())
                 }
             }
-
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        val user = auth.currentUser;
-
-        if(user != null){
-
-            val intent = Intent(this, DashboardActivity::class.java);
-            startActivity(intent)
-
-        }else{
-            Log.e("user status", "User null")
         }
     }
+
 }

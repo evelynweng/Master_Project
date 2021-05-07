@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:text="@string/login"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/tvUsername"
+        app:layout_constraintBottom_toTopOf="@+id/tvPhoneNumber"
         app:layout_constraintStart_toStartOf="parent"
         android:textSize="26sp"
         android:textColor="#000"
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"/>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tvUsername"
+        android:id="@+id/tvPhoneNumber"
         android:layout_width="match_parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="30dp"
@@ -29,10 +29,10 @@
         android:layout_height="wrap_content">
 
         <EditText
-            android:id="@+id/edUsername"
+            android:id="@+id/edPhoneNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Username"
+            android:hint="Phone Number"
             />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -46,7 +46,7 @@
         android:layout_marginTop="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvUsername"
+        app:layout_constraintTop_toBottomOf="@+id/tvPhoneNumber"
         android:layout_height="wrap_content">
 
         <EditText
@@ -62,22 +62,26 @@
     <Button
         android:id="@+id/btnLogin"
         android:layout_width="match_parent"
-        android:text="Login"
-        app:layout_constraintTop_toBottomOf="@+id/tvPassword"
+        android:layout_height="wrap_content"
         android:layout_margin="30dp"
-        android:textColor="#fff"
         android:background="@color/colorAccent"
-        android:layout_height="wrap_content"/>
+        android:text="Login"
+        android:textColor="#fff"
+        app:layout_constraintTop_toBottomOf="@+id/tvPassword"
+        tools:layout_editor_absoluteX="30dp" />
+
     <TextView
         android:id="@+id/tvRegister"
         android:layout_width="wrap_content"
-        android:text="Register ?"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:padding="10dp"
+        android:text="Register"
         android:textColor="@color/colorPrimary"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:padding="10dp"
-        android:layout_height="wrap_content"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
