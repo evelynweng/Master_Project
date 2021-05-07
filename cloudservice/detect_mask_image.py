@@ -3,29 +3,33 @@
 import numpy as np
 import argparse
 import cv2
-import os
+from os.path import dirname, join
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
 
 
-def detect_mask(image_in):
+def detect_mask(image):
     # load openCV's pretrained face detector model
 
     # print("loading face detector")
-    configPath = os.path.sep.join(["face_detector", "deploy.prototxt"])
-    faceModelPath = os.path.sep.join(["face_detector", "res10_300x300_ssd_iter_140000.caffemodel"])
+    # configPath = os.path.sep.join(["face_detector", "deploy.prototxt"])
+    # faceModelPath = os.path.sep.join(["face_detector", "res10_300x300_ssd_iter_140000.caffemodel"])
+    configPath = join(dirname(__file__), "face_detector/deploy.prototxt")
+    faceModelPath = join(dirname(__file__), "face_detector/res10_300x300_ssd_iter_140000.caffemodel")
     faceDetector = cv2.dnn.readNet(configPath, faceModelPath)
+
     
     # load trained mask detector model
 
     # print("loading mask detector")
-    maskDetector = load_model('mask_detector/mask_detector.model')
+    maskModelPath = join(dirname(__file__), "mask_detector/mask_detector.model")
+    maskDetector = load_model(maskModelPath)
 
     # load input image
     # image = cv2.imread(image_in)
-    img_as_np = np.frombuffer(image_in, dtype=np.uint8)
-    image = cv2.imdecode(img_as_np, flags=1)
+    # img_as_np = np.frombuffer(image_in, dtype=np.uint8)
+    # image = cv2.imdecode(img_as_np, flags=1)
     # get the image height and width
     (h, w) = image.shape[:2]
 

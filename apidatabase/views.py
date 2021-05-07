@@ -1,32 +1,47 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
+from .doservice import  doService
+import json
+from .models import Store, Queue
+from cloudservice.handlerclass.keyvaluefordict import *
 
 @csrf_exempt 
 # Create your views here.
 def index(request):
-    """Engress point of the cloudservice application
-    Args:
-        request (WSGIRequest): https://github.com/django/django/blob/main/django/core/handlers/wsgi.py#L64
-
-    Returns:
-        HTTPResponse:
-    """
+    
     # Uncomment this line to play with the database API
     # play_with_database()
-    print(request, type(request))
-
-
+    
     if request.method == "GET":
         return HttpResponse("this is GET method")
     elif request.method == "POST":
-        q = request.POST
-        l = list(q.values())
-        return HttpResponse(l[0])
+        print('database recv request')
+
+        recv_dict = request.POST.dict()
+
+        SERVICETAG = kSERVICE
+        SERVICE ={
+            vLOGIN: doService(recv_dict).do_login,
+            vREGISTER:doService(recv_dict).do_reg,
+            vSTARTDETECT: doService(recv_dict).do_start,
+            vQUERYCAPACITY: doService(recv_dict).do_query_capacity,
+        }
+        
+        if not (SERVICETAG in recv_dict and recv_dict.get(SERVICETAG, None) in SERVICE):
+            return HttpResponseNotFound('<h1>illegal request</h1>')
+        
+        request_service = recv_dict[SERVICETAG] # str: login, register, mask
+        print('redirect request to database api')
+        response = SERVICE.get(request_service, doService(recv_dict).do_nothing)()  # forward to designate service module, default: donothing
+        print("database http respond content:", response.content)
+
+        print("objall:",Store.objects.all())
+
+        return response
 
 def play_with_database():
-    from models import Store, Queue
 
     print("=========================================")
     print("Show all Stores after creating KFC")
@@ -64,3 +79,4 @@ def play_with_database():
     print("Delete all items from Store")
     Store.objects.all().delete()
     print(Store.objects.all())
+
