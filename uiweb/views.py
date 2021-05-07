@@ -6,6 +6,7 @@ from django.contrib import messages
 from apidatabase.models import Store
 from .forms import StoreRegistrationForm, LoginForm
 from .decorators import user_login_required
+#from django.contrib.auth import authenticate,login,logout
 
 # def detail(request, question_id):
 #    return HttpResponse("You're looking at question %s." % question_id)
@@ -37,10 +38,13 @@ def index(request):
 #@user_login_required
 def home(request):
     if 'user_id' in request.session:
-        user = get_user(request)
-        return render(request, 'uiweb/home2.html', {'user': user}) #this is temporary page to show logout
+        user_name = get_user(request)
+        print(user_name)
+        owner_name = user_name.owner_first_name + " " + user_name.owner_last_name
+        print(owner_name)
+        return render(request, 'uiweb/home2.html', {'user_name': user_name, 'owner_name':owner_name}) #this is temporary page to show logout
     else:
-        return render(request, 'uiweb/home.html',)    
+        return render(request, 'uiweb/home.html')    
 
     ''' user = get_user(request)
     return render(request, 'uiweb/home.html', {'user': user}) '''
@@ -56,6 +60,8 @@ def login(request):
         if Store.objects.filter(email=email, password=password).exists():
             user = Store.objects.get(email=email)
             request.session['user_id'] = user.store_id # This is a session variable and will remain existing as long as you don't delete this manually or clear your browser cache
+            owner_name = user.owner_first_name + user.owner_last_name
+            print(owner_name)
             return redirect('Home_Page')
         else:
             messages.warning(request, "Wrong email or password.\n Please try again.")
@@ -64,10 +70,11 @@ def login(request):
 def logout(request):
     if 'user_id' in request.session:
       del request.session['user_id'] # delete user session
-    return redirect('Login')    
+    return redirect('Home_Page')    
 
 def get_user(request):
-     return Store.objects.get(store_id=request.session['user_id'])    
+    user = Store.objects.get(store_id=request.session['user_id'])   
+    return user 
 
 def storeRegistration(request):
     if request.method == 'POST':
@@ -89,7 +96,19 @@ def registration_success(request):
     return render(request, 'uiweb/success.html')
 
 def profile(request):
-    return render(request, 'uiweb/profile.html')    
+    if 'user_id' in request.session:
+        user_name = get_user(request)
+        firstname = user_name.owner_first_name + "'s profile"
+        name = user_name.owner_first_name + " " + user_name.owner_last_name
+        store_name = user_name.store_name
+        email = user_name.email
+        phone = user_name.store_phone
+        address = user_name.store_address
+        url = user_name.store_url
+        date_joined = user_name.registration_date
+        context = {'name':name, 'store_name':store_name,'email':email,'phone':phone,'address':address,'url' : url, 'date_joined':date_joined}
+
+    return render(request, 'uiweb/profile.html', {'context':context})    
 
 
 
