@@ -37,7 +37,8 @@ def index(request):
             vREGISTER: doService().do_reg,
             vMASK: doService().do_detect,
             vCHECKIN: doService().do_checkin,
-            vSTARTDETECT: doService().do_start 
+            vSTARTDETECT: doService().do_start, 
+            vSTOREINOUT:doService().do_store_in_out,
         }
 
         ''' 

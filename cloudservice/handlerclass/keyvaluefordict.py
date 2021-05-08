@@ -25,6 +25,7 @@ kSTOREPHONE ='store_phone'
 kPASSWORD = 'password'
 kSTORENAME = 'store_name'
 kSTORECAPACITY ='store_capacity'
+kSTOREINOUT = 'store_in_out'
 
 # values for dict:
 vVALID = 295
@@ -34,11 +35,14 @@ vREGISTER = 'REGISTER'
 vMASK = 'MASK'
 vCHECKIN ='CHECKIN'
 vSTARTDETECT = 'STARTDETECT'
-
+vSTOREINOUT = 'store_in_Out'
 
 # Database API replated
 vQUERYCAPACITY = 'ENTRY'
 
+# vfor store in/out
+vSTOREIN = 'True'
+vSTOREOUT = 'False'
 
 # kSERVICE value to queue web application
 # might not use in future
