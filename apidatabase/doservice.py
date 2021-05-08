@@ -66,7 +66,7 @@ class doService:
         if self.STOREID:
             stores = Store.objects.filter(store_id = self.STOREID)
             if stores.exists():
-                store = stores.get()
+                store = stores.get() #if queryset not exist but directly get, will raise excpetion
                 store_customer_after_enter = self.CUSTOMERS + store.store_current_count
                 if  store_customer_after_enter <= store.store_capacity:
                     can_enter = True
