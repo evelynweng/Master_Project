@@ -39,7 +39,7 @@ class doService:
             # currently passing
         pass_temp = True
         if pass_mask and pass_temp : 
-            reply_dict = self.queuehandler.query_status_and_get_dict(self, store_id, customer_numbers)
+            reply_dict = self.queuehandler.query_status_and_get_dict(store_id, customer_numbers)
         else:
             reply_dict = {keyReply:False}
         '''
