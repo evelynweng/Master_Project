@@ -28,17 +28,21 @@ class doService:
     def do_detect(self,input_dict) -> HttpResponse:
         store_id = self.datahandler.get_store_id(input_dict)
         mask_image = self.datahandler.get_mask_img(input_dict)
-
+        customer_numbers = 1 #currently set to one.
         if mask_image.any():        
             pass_mask = detect_mask(mask_image)
         else: 
             return self.datahandler.reply_invalid_data()
 
-
+        
         # get bool by : temperature
             # currently passing
         pass_temp = True
-        
+        if pass_mask and pass_temp : 
+            reply_dict = self.queuehandler.query_status_and_get_dict(self, store_id, customer_numbers)
+        else:
+            reply_dict = {keyReply:False}
+        '''
         can_enter = False # can_enter default to False
         if pass_mask and pass_temp : 
             can_enter = self.queuehandler.queue_status(store_id)
@@ -50,7 +54,7 @@ class doService:
                 reply_dict = {keyReply:can_enter, keyQrcode: qrcode_str}
         else: 
             reply_dict = {keyReply:False}
-        
+        '''
         return self.datahandler.dict_to_HttpResponse(reply_dict)
 
     def do_checkin(self,input_dict) -> HttpResponse:
