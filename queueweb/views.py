@@ -235,7 +235,7 @@ def Customeruery(request):
                 entry_or_not = True
                 store_interested_qrcode = None
             
-            overall_return_dict = {"REPLY":entry_or_not, 'kQRCODE' :store_interested_qrcode}
+            overall_return_dict = {"REPLY":entry_or_not, 'QRCODE' :store_interested_qrcode}
             #print(store_interested_qrcode)
             #overall_return_dict = {"REPLY":entry_or_not, "QRCODE":12345}
             json_string = json.dumps(overall_return_dict)
