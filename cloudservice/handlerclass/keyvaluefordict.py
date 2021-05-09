@@ -27,6 +27,8 @@ kSTORENAME = 'store_name'
 kSTORECAPACITY ='store_capacity'
 kSTOREINOUT = 'store_in_out'
 
+kCUSTOMERNUMBERS = 'customer_numbers'
+
 # values for dict:
 vVALID = 295
 # SERVICE value
