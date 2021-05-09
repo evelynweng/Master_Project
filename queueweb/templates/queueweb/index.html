@@ -1,0 +1,42 @@
+{% extends 'queueweb/base.html' %}
+{% load static %} 
+
+{% block title_block %}
+    Index
+{% endblock %}
+
+{% block body_block %}
+
+       
+
+
+        <div>
+        {% if stores %}
+            <ul>
+                <h5>stores</h5>
+                {% for store in stores %} 
+                    <li><a href="/queueweb/store/{{ store.slug }}/">{{ store.store_name }}</a></li>
+                   
+                    <div>
+                        {% if queues %}
+                            <ul>
+                                {% for queue in queues %} 
+                                    {% if queue.store == store %}
+                                        <li>{{ queue.queuedate }}</li>
+                                    {% endif %}
+                                {% endfor%}
+                            </ul>
+                        {% else %}
+                            <strong>There are no queues present.</strong>
+                        {% endif%}
+                    </div>
+                {% endfor%}
+            </ul>
+        {% else %}
+            <strong>There are no store present.</strong>
+        {% endif%}
+
+        </div>
+
+
+{% endblock %}
