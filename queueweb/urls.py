@@ -13,7 +13,7 @@ urlpatterns = [
     path('store/<slug:store_name_slug>/<int:customer_id>/customer_leave',views.customer_leave,name='customer_leave'),
     path('store/<slug:store_name_slug>/customer_left_store_test',views.customer_left_store_test,name='customer_left_store_test'),
     # path for Evelyn
-    path('', views.customer_query, name="customer_query"),
+    path('', views.Customeruery, name="Customeruery"),
     # ex: /polls/5/
     # path('<int:question_id>/', views.detail, name='detail'),
 ]

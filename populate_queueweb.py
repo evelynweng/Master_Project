@@ -3,7 +3,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cloud295.settings')
 
 import django
 django.setup()
-from apidatabase.models import Store_q, Queue_q, Customer_q
+from apidatabase.models import Store, Queue, Customer
 import datetime
 
 def populate():
@@ -41,9 +41,9 @@ def populate():
 
 def add_customer(name, queuedate, first_name, last_name, phone, number_of_people, 
     current_waiting_time_individual, potential_wait_time, real_wait_time):
-    s = Store_q.objects.get_or_create(name = name)[0]
-    q = Queue_q.objects.get_or_create(queuedate=queuedate)[0]
-    cus = Customer_q.objects.get_or_create(store = s, queue=q, phone=phone)[0]
+    s = Store.objects.get_or_create(name = name)[0]
+    q = Queue.objects.get_or_create(queuedate=queuedate)[0]
+    cus = Customer.objects.get_or_create(store = s, queue=q, phone=phone)[0]
     cus.first_name = first_name
     cus.last_name = last_name
     cus.number_of_people = number_of_people
@@ -54,7 +54,7 @@ def add_customer(name, queuedate, first_name, last_name, phone, number_of_people
     cus.save()
 
 def add_queue(store, queuedate, current_waiting_time, number_people_waiting,views = 0):
-    temp_q = Queue_q.objects.get_or_create(store=store, queuedate=queuedate)[0]
+    temp_q = Queue.objects.get_or_create(store=store, queuedate=queuedate)[0]
     temp_q.current_waiting_time = current_waiting_time
     temp_q.number_people_waiting = number_people_waiting
     temp_q.views = views
@@ -62,7 +62,7 @@ def add_queue(store, queuedate, current_waiting_time, number_people_waiting,view
     return temp_q
 
 def add_store(name):
-    s=Store_q.objects.get_or_create(name=name, capacity=36, url= 'http://nothinghere.com')[0]
+    s=Store.objects.get_or_create(name=name, capacity=36, url= 'http://nothinghere.com')[0]
     s.save()
     return s
 

@@ -1,5 +1,5 @@
 from django import forms
-from apidatabase.models import Customer_q
+from apidatabase.models import Customer
 
 
 
@@ -12,7 +12,7 @@ class CustomerForm(forms.ModelForm):
                                 widget=forms.TextInput(attrs={'placeholder':'Enter Phone Number'}))
     number_of_people = forms.IntegerField()
 
-    customer_queue_id = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
+    Customerueue_id = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
     join_time = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
     current_waiting_time_individual = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
     potential_wait_time = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
@@ -21,6 +21,6 @@ class CustomerForm(forms.ModelForm):
 
     class Meta:
         # provide an association between the ModelForm and a model
-        model = Customer_q
+        model = Customer
          # some fields we may not want to include them, eg: foreign key
         exclude = ('store','queue',)

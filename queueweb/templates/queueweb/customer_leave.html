@@ -6,23 +6,13 @@
 {% endblock %}
 
 {% block body_block %}
-<div class="container">
-    <img src="{% static "images/welcome.png" %}" alt="Uh oh, didn't show"> 
-    
-        <div>
-            <h2><strong>Hi {{ customer.first_name }}! 
-                Thank you for visiting!
-                See you later!</strong></h2>
-           {% if store %}
-            <h3>Welcome to {{ store.store_name }}</h3>
-                {% if queue %}
-                <h3>Today is {{ queue.queuedate }}</h3>
-                {% else %}
-                <h3>No queue</h3>
-                {% endif %}
-            {% endif %}
 
-      
+
+<div class="container">
+  
+    <h2><strong>Hi {{ customer.first_name }}! 
+        Thank you for visiting {{ store.store_name }}!</strong></h2>
+    <h2><strong>See you later!</strong></h2>   
         
 </div>
 {% endblock %}
