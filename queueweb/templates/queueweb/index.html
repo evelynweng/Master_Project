@@ -15,7 +15,7 @@
             <ul>
                 <h5>stores</h5>
                 {% for store in stores %} 
-                    <li><a href="/queueweb/store/{{ store.slug }}/">{{ store.name }}</a></li>
+                    <li><a href="/queueweb/store/{{ store.slug }}/">{{ store.store_name }}</a></li>
                    
                     <div>
                         {% if queues %}

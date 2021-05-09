@@ -1,6 +1,8 @@
-from django.http import HttpResponse
+from django.http import HttpResponse,HttpResponseNotFound
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+
+
 
 # modified by xm
 from apidatabase.models import Store_q, Queue_q, Customer_q
@@ -9,10 +11,13 @@ from django.shortcuts import redirect
 from django.urls import reverse
 import datetime
 import qrcode
+import base64
+from io import BytesIO
 # def detail(request, question_id):
 #    return HttpResponse("You're looking at question %s." % question_id)
 
-
+import requests
+import json
 
 @csrf_exempt 
 # Create your views here.
@@ -37,7 +42,7 @@ import qrcode
     #     return HttpResponse(l[0])
 
 def index(request):
-    store_list = Store_q.objects.order_by('name')
+    store_list = Store_q.objects.order_by('store_name')
     queue_list = Queue_q.objects.order_by('queuedate')
     context_dict = {}
     context_dict['stores'] = store_list
@@ -87,7 +92,7 @@ def customer_register(request,store_name_slug):
                 customer.customer_queue_id = q.last_customer_queue_id + 1
                 if q.last_customer_queue_id > 0:
                     former_customer = Customer_q.objects.get(queue = q, customer_queue_id = q.last_customer_queue_id)
-                    customer.potential_wait_time = former_customer.potential_wait_time + former_customer.number_of_people * store_tmp.average_waiting_time_for_person
+                    customer.potential_wait_time = former_customer.potential_wait_time + former_customer.number_of_people * store_tmp.store_average_waiting_time_for_person
                 
                 q.last_customer_queue_id = customer.customer_queue_id
                 q.current_waiting_time = customer.potential_wait_time
@@ -144,14 +149,14 @@ def customer_leave(request, store_name_slug, customer_id):
             while (cus_q_id_tmp < queue.last_customer_queue_id):
                 cus_next = Customer_q.objects.get(queue = queue, customer_queue_id = cus_q_id_tmp + 1)
                 cus_next.customer_queue_id = cus_q_id_tmp
-                cus_next.potential_wait_time = cus_next.potential_wait_time - customer.number_of_people * store_tmp.average_waiting_time_for_person
+                cus_next.potential_wait_time = cus_next.potential_wait_time - customer.number_of_people * store_tmp.store_average_waiting_time_for_person
                 cus_q_id_tmp += 1
                 cus_next.save()
 
             if cus_q_id_tmp == queue.last_customer_queue_id:
         
                 queue.last_customer_queue_id = queue.last_customer_queue_id - 1
-                queue.current_waiting_time = queue.current_waiting_time - customer.number_of_people * store_tmp.average_waiting_time_for_person
+                queue.current_waiting_time = queue.current_waiting_time - customer.number_of_people * store_tmp.store_average_waiting_time_for_person
                 queue.number_people_waiting = queue.number_people_waiting - customer.number_of_people
         
                 queue.save()
@@ -173,10 +178,8 @@ def customer_left_store_test(request, store_name_slug):
     queue = Queue_q.objects.get(store = store_tmp,queuedate=datetime.date.today())
 
     if request.method == 'POST':
-        queue.current_customer_in_store -= 1
-        queue.save()
         # calculate how many persons could enter the store
-        diff = store_tmp.capacity - queue.current_customer_in_store
+        diff = store_tmp.store_capacity - store_tmp.store_current_count
         # find the customer who is the first in queue
         customer_enter = Customer_q.objects.get(queue = queue, customer_queue_id = queue.first_customer_queue_id + 1)
         if diff < customer_enter.number_of_people:
@@ -187,10 +190,9 @@ def customer_left_store_test(request, store_name_slug):
             # customer_enter.send_ticket() - haven't add this function
             customer_enter.save()
             queue.first_customer_queue_id += 1
-            decreased_time = customer_enter.number_of_people * store_tmp.average_waiting_time_for_person
-            # consume customer_enter already enters the store, actually queue.current_customer_in_store should be 
-            # modified by people leave store and people enter store
-            queue.current_customer_in_store += customer_enter.number_of_people
+            decreased_time = customer_enter.number_of_people * store_tmp.store_average_waiting_time_for_person
+
+            #queue.current_customer_in_store += customer_enter.number_of_people
             queue.current_waiting_time = queue.current_waiting_time - decreased_time
             queue.number_people_waiting = queue.number_people_waiting - customer_enter.number_of_people
             queue.save()
@@ -201,3 +203,71 @@ def customer_left_store_test(request, store_name_slug):
                 cus_q_id_tmp += 1
 
     return render(request,'queueweb/customer_left_store_test.html')
+
+@csrf_exempt
+def customer_query(request):
+
+    if request.method == "GET":
+        return HttpResponse("this is GET method")
+    elif request.method == "POST":
+
+        req_dict = request.POST.dict()
+        print(req_dict)
+        service = req_dict.get('SERVICE')
+        if service == 'ENTRY':
+            store_id = req_dict.get('store_id')
+            customer_number = int(req_dict.get('customer_numbers'))
+            store_interested = Store_q.objects.get(store_id = store_id)
+            queue_current = Queue_q.objects.get_or_create(store = store_interested,queuedate=datetime.date.today())[0]
+            
+            customer_total = store_interested.store_current_count + customer_number
+            # qrcodeA = A + B # B is related to store.slug
+            # imgcode = datahandler.ima_to_encode(qrcodeA)
+            if  queue_current.number_people_waiting > 0:
+                entry_or_not = False
+                store_interested_qrcode = generate_qrcode(store_id)
+            elif queue_current.number_people_waiting == 0 and customer_total > store_interested.store_capacity:
+                entry_or_not = False
+                store_interested_qrcode = generate_qrcode(store_id)
+            else:
+                #store_interested.current_customer_total += custoer_number
+                #store_interested.save()
+                entry_or_not = True
+                store_interested_qrcode = None
+            
+            overall_return_dict = {"REPLY":entry_or_not, 'kQRCODE' :store_interested_qrcode}
+            #print(store_interested_qrcode)
+            #overall_return_dict = {"REPLY":entry_or_not, "QRCODE":12345}
+            json_string = json.dumps(overall_return_dict)
+            return HttpResponse(json_string, content_type =  "text/html; charset=utf-8")
+        else:
+            return HttpResponseNotFound('<h1>illegal request</h1>')
+
+
+# function for generate store qrcode
+def generate_qrcode(store_id):
+    store_tmp = Store_q.objects.get(store_id=store_id)
+        # currently firstpart is xm's ipaddress + app name
+    firstpart = 'http://192.168.0.15:8000/queueweb/store/'
+    secondpart = store_tmp.slug
+    qrcode_url = firstpart + secondpart
+    img = qrcode.make(qrcode_url)
+        #save_path = 'queueweb/static/'
+    
+    buffered= BytesIO()
+    img.save(buffered,format = "png")
+    img_str = base64.b64encode(buffered.getvalue())
+    store_qrcode = base64.b64encode(img_str)
+    return str(store_qrcode)
+        # completeName = os.path.join(save_path, file_name)
+        # img.save(completeName) 
+    
+@csrf_exempt
+def test_case(request):
+    input_dict = {"SERVICE":"ENTRY", "store_id":1, "customer_numbers":5}
+    json_string = json.dumps(input_dict)
+    #return  requests.get(url = "http://localhost:8000/queueweb/")
+    A = requests.post(url = "http://localhost:8000/queueweb/",data = input_dict ).content
+    #print(type(A))
+    return HttpResponse(A)
+    #return HttpResponseNotFound('<h1>illegal request</h1>')

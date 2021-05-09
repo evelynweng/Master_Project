@@ -5,7 +5,7 @@ from apidatabase.models import Store_q, Queue_q, Customer_q
 
 # add in this class to customise the admin interface
 class storeAdmin(admin.ModelAdmin):
-    prepopulated_fields = {'slug':('name',)}
+    prepopulated_fields = {'slug':('store_name',)}
 
 class Customer_qAdmin(admin.ModelAdmin):
     readonly_fields = ('join_time',)
