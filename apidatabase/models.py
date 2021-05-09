@@ -17,7 +17,7 @@ class Store(models.Model):
     store_id  =  models.AutoField(primary_key=True)
 
     store_name = models.TextField(max_length=200)
-    store_phone =  models.TextField(max_length=20, unique= True)
+    store_phone =  models.TextField(max_length=20, unique= True, default='0')
     password = models.CharField(max_length=30, default=None)
     store_capacity = models.PositiveIntegerField(default = 0)
     store_current_count = models.PositiveIntegerField(default = 0)
