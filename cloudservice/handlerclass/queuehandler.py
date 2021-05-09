@@ -1,6 +1,7 @@
 
 from .datahandler import dataHandler
 from .keyvaluefordict import *
+from apidatabase.models import Store, Queue
 
 
 class queueHandler:
@@ -14,3 +15,20 @@ class queueHandler:
         get_qrcode_dict = {keyService: qrCode, keyStoreid: store_id, }
         encode_qrcode_string = 'need to process'
         return encode_qrcode_string
+    
+    def store_in_out(self, store_id, store_in) -> int :
+        print(type(store_in))
+        if store_id:
+            stores = Store.objects.filter(store_id = store_id)
+            if stores.exists():
+                store = stores.get()
+                if store_in == vSTOREIN :
+                    
+                    store.store_current_count += 1
+                    store.save()
+                else:
+                    store.store_current_count -= 1
+                    store.save()
+                return store.store_current_count
+            else:
+                return -999

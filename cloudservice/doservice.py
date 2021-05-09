@@ -62,4 +62,12 @@ class doService:
 
     def do_nothing(self, input_dict) -> HttpResponse :
         reply_dict = {keyReply:False}
-        return self.dataHandler.dict_to_HttpResponse(reply_dict)
+        return self.datahandler.dict_to_HttpResponse(reply_dict)
+
+    def do_store_in_out(self, input_dict) -> HttpResponse:
+        store_id = self.datahandler.get_store_id(input_dict)
+        store_in = self.datahandler.get_store_in_out(input_dict)
+        current_customers = self.queuehandler.store_in_out(store_id, store_in)
+        reply_dict = {'count': current_customers}
+        return self.datahandler.dict_to_HttpResponse(reply_dict)
+
