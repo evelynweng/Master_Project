@@ -21,7 +21,7 @@ class TestCloudservice(unittest.TestCase):
     def test_register_true(self):
         input_dict =  {kREPLY:True, kSTOREID: 1}
         expect_result = get_httpreponse_content(input_dict)
-        test_result = BuidTestServiceRequest().register_true().content
+        test_result = BuidTestServiceRequest().register_true()
         print("send")
         self.assertEqual(test_result, expect_result)
     '''
@@ -53,7 +53,7 @@ class TestCloudservice(unittest.TestCase):
         self.assertEqual(test_result, expect_result)
     
     def test_startdetect_true(self):
-        input_dict = {kREPLY:True}
+        input_dict = {kREPLY:True, kQRCODE:None}
         expect_result = get_httpreponse_content(input_dict)
         test_result = BuidTestServiceRequest().startdetect_true()
         #print(get_test.content)
