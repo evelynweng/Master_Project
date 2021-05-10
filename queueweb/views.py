@@ -261,7 +261,7 @@ def generate_qrcode(store_id):
     
     buffered= BytesIO()
     img.save(buffered,format = "png")
-    img_str = base64.urlsafe_b64encode(buffered.getvalue())
+    img_str = base64.b64encode(buffered.getvalue())
     print("imgstr type:", type(img_str))
     return force_str(img_str)
     #Storercode = base64.b64encode(img_str)

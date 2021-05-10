@@ -153,8 +153,8 @@ if __name__ == '__main__':
     img = dataHandler().encodeImg_to_img(img_str)
     cv2.imshow("test", img)
     cv2.waitKey(0)
-    '''
-    '''
+    
+    
     with open('example_01.jpg', "rb") as image_file:    
         img_str = base64.b64encode(image_file.read())
 
