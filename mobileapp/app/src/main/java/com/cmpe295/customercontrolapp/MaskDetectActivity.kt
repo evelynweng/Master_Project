@@ -9,9 +9,11 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.core.view.isVisible
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import kotlinx.android.synthetic.main.activity_maskdetect.*
@@ -34,6 +36,8 @@ class MaskDetectActivity : AppCompatActivity() {
         Log.d("print", "creating mask detect activity")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maskdetect)
+        detectionResponse.visibility = View.INVISIBLE
+        imageView.visibility = View.INVISIBLE
         Log.d("print", "set content view")
 
         btnTakePicture.setOnClickListener {
@@ -54,10 +58,6 @@ class MaskDetectActivity : AppCompatActivity() {
             }
         }
 
-        btnDetectMask.setOnClickListener {
-            detectMask()
-        }
-
         btnStopDetection.setOnClickListener {
             val intent = Intent(this, DashboardActivity::class.java);
             startActivity(intent);
@@ -72,18 +72,17 @@ class MaskDetectActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val takenImage = BitmapFactory.decodeFile(photoFile.absolutePath)
-            imageView.setImageBitmap(takenImage)
+            detectMask(takenImage)
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
 
     }
 
-    private fun detectMask() {
+    private fun detectMask(image: Bitmap) {
 
-        val takenImage = BitmapFactory.decodeFile(photoFile.absolutePath)
         val baos = ByteArrayOutputStream()
-        takenImage.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val byteArrayImage: ByteArray = baos.toByteArray()
         val encodedImage: String = Base64.encodeToString(byteArrayImage, Base64.DEFAULT)
 
@@ -105,30 +104,29 @@ class MaskDetectActivity : AppCompatActivity() {
 
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
-
                     val json = JSONObject(response.body()!!.string())
-                    Log.d("print", json.getString("REPLY"))
+                    Log.d("print", json.toString())
                     if (json.getBoolean("REPLY")) {
-                        success()
-                    } else
-                        fail()
+                        Log.d("print", "mask, can enter")
+                        detectionResponse.text = "Mask detected!"
+                    } else if (json.has("QRCODE")) {
+                        Log.d("print", "mask, store full")
+                        detectionResponse.text = "Store is full, scan QRCODE to join virtual queue"
+                        val b64 = json.getString("QRCODE")
+                        val imageBytes = Base64.decode(b64, Base64.DEFAULT)
+                        val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                        imageView.setImageBitmap(decodedImage)
+                        imageView.visibility = View.VISIBLE
+                    } else {
+                        Log.d("print", "no mask")
+                        detectionResponse.text = "Mask not detected"
+                    }
                 } else {
                     Log.d("print", response.code().toString())
-                    error()
+                    detectionResponse.text = "Couldn't connect to server"
                 }
+                detectionResponse.visibility = View.VISIBLE
             }
         }
-    }
-
-    private fun success() {
-        Toast.makeText(this, "Mask Detected", Toast.LENGTH_LONG).show()
-    }
-
-    private fun fail() {
-        Toast.makeText(this, "Mask not detected", Toast.LENGTH_LONG).show()
-    }
-
-    private fun error() {
-        Toast.makeText(this, "Couldn't connect to server", Toast.LENGTH_LONG).show()
     }
 }
