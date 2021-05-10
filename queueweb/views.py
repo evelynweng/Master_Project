@@ -1,6 +1,7 @@
 from django.http import HttpResponse,HttpResponseNotFound
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.encoding import force_str
 
 
 
@@ -228,7 +229,9 @@ def Customeruery(request):
                 store_interested_qrcode = generate_qrcode(store_id)
             elif queue_current.number_people_waiting == 0 and customer_total > store_interested.store_capacity:
                 entry_or_not = False
+                print("generate_qrcode")
                 store_interested_qrcode = generate_qrcode(store_id)
+                print("qrcode str type:", type(store_interested_qrcode))
             else:
                 #store_interested.current_customer_total += custoer_number
                 #store_interested.save()
@@ -236,9 +239,11 @@ def Customeruery(request):
                 store_interested_qrcode = None
             
             overall_return_dict = {"REPLY":entry_or_not, 'QRCODE' :store_interested_qrcode}
+            print("queue reply:", overall_return_dict)
             #print(store_interested_qrcode)
             #overall_return_dict = {"REPLY":entry_or_not, "QRCODE":12345}
             json_string = json.dumps(overall_return_dict)
+            print("return to cloudservice")
             return HttpResponse(json_string, content_type =  "text/html; charset=utf-8")
         else:
             return HttpResponseNotFound('<h1>illegal request</h1>')
@@ -256,9 +261,11 @@ def generate_qrcode(store_id):
     
     buffered= BytesIO()
     img.save(buffered,format = "png")
-    img_str = base64.b64encode(buffered.getvalue())
-    Storercode = base64.b64encode(img_str)
-    return str(Storercode)
+    img_str = base64.urlsafe_b64encode(buffered.getvalue())
+    print("imgstr type:", type(img_str))
+    return force_str(img_str)
+    #Storercode = base64.b64encode(img_str)
+    # return str(Storercode)
         # completeName = os.path.join(save_path, file_name)
         # img.save(completeName) 
     
