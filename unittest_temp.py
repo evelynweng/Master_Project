@@ -25,7 +25,7 @@ class TestCloudservice(unittest.TestCase):
         test_result = BuidTestServiceRequest().register_true()
         print("send")
         self.assertEqual(test_result, expect_result)
-    '''
+    
     '''
     def test_login_true(self):
         input_dict = {kREPLY:True, kSTOREID:1}
@@ -38,7 +38,7 @@ class TestCloudservice(unittest.TestCase):
         expect_result = get_httpreponse_content(input_dict)
         test_result = BuidTestServiceRequest().login_false()
         self.assertEqual(test_result, expect_result)
-    '''
+    
     def test_mask_true(self):
         input_dict = {kREPLY:True, kQRCODE:None}
         expect_result = get_httpreponse_content(input_dict)
@@ -46,7 +46,7 @@ class TestCloudservice(unittest.TestCase):
 
         # print(get_test.content)
         self.assertEqual(test_result, expect_result)
-    '''    
+       
     #currently will fail because not put in qrcode img
     def test_mask_false(self):
         input_dict = {kREPLY:False, kQRCODE:None}
@@ -54,8 +54,8 @@ class TestCloudservice(unittest.TestCase):
         test_result = BuidTestServiceRequest().mask_false()
         #print(get_test.content)
         self.assertEqual(test_result, expect_result)
-    '''
-    '''
+    
+    
     def test_startdetect_true(self):
         input_dict = {kREPLY:True}
         expect_result = get_httpreponse_content(input_dict)
@@ -69,7 +69,7 @@ class TestCloudservice(unittest.TestCase):
         test_result = BuidTestServiceRequest().startdetect_false()
         #print(get_test.content)
         self.assertEqual(test_result, expect_result)
-    '''
+    
     
     
 class BuidTestServiceRequest:

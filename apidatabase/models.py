@@ -32,7 +32,7 @@ class Store(models.Model):
     slug = models.SlugField(unique=True)
     owner_first_name = models.CharField(max_length=30)
     owner_last_name = models.CharField(max_length=30)
-    email = models.EmailField(max_length=100)
+    email = models.EmailField(max_length=100,default='0')
     store_address = models.CharField(max_length=100)
     registration_date = models.DateTimeField(auto_now_add=True)	
 
