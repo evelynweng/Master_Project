@@ -1,0 +1,13 @@
+{%extends "uiweb/base.html"%}
+{% block content %}
+    <div class = ' card content-section col-md-4 center'>
+        <h2>Register</h2>
+        <form method ="POST">
+            {%csrf_token %}
+            <legend class="border-bottom mb-4">Join Today</legend>
+            {{form.as_p}}
+            <button class="btn btn-outline-info" type="submit">Sign Up</button>
+            Already Have An Account? <a class="ml-2" href="#">Sign In</a>
+        </form>
+    </div>
+{% endblock content %}

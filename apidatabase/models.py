@@ -1,31 +1,40 @@
 from django.db import models
+
 from django.template.defaultfilters import slugify
 import qrcode
 import os
 
+from django.utils import timezone
+
+
 # Create your models here.
-# Django will 
+# Django will
 #   1) Creaet database tables(schemas) `Store` and `Queue`
 #   2) Create a Python database-access API for accessing `Store` and `Queue` tables
 #
 # Refer to the page for support fields in Django
 # https://docs.djangoproject.com/en/3.1/ref/models/fields/#field-types
+
 # store_id=1, store_name="KFC", store_phone =' 12345678', 
 # password = 'testpwd', store_capacity=3
 
 class Store(models.Model):
     store_id  =  models.AutoField(primary_key=True)
 
-    store_name = models.TextField(max_length=200)
-    store_phone =  models.TextField(max_length=20, unique= True, default='0')
-    password = models.CharField(max_length=30, default=None)
+    store_name = models.TextField(max_length=50)
+    store_phone =  models.TextField(max_length=12, unique= True,default='0')
+    password = models.CharField(max_length=30)
     store_capacity = models.PositiveIntegerField(default = 0)
     store_current_count = models.PositiveIntegerField(default = 0)
-
-    store_url = models.URLField()
+    store_url = models.URLField(max_length = 200)
     store_average_waiting_time_for_person = models.IntegerField(default=0)
     store_current_count = models.PositiveIntegerField(default = 0)
     slug = models.SlugField(unique=True)
+    owner_first_name = models.CharField(max_length=30)
+    owner_last_name = models.CharField(max_length=30)
+    email = models.EmailField(max_length=100,default='0')
+    store_address = models.CharField(max_length=100)
+    registration_date = models.DateTimeField(auto_now_add=True)	
 
 
     def save(self,*args, **kwargs):
@@ -34,6 +43,7 @@ class Store(models.Model):
 
     class Meta:
         verbose_name_plural = 'stores'
+
 
     def __str__(self):
         return "{id}:{name}:{phone}:{password}:{capacity}".format(
@@ -78,3 +88,4 @@ class Customer(models.Model):
 
     def __str__(self):
         return self.phone
+
