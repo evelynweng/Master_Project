@@ -15,4 +15,10 @@ six
 tqdm
 urllib3                    
 wheel
+django-widget-tweaks
+django-crispy-forms
+conda
+conda-manager
+opencv-python
+tensorflow
 
