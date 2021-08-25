@@ -18,17 +18,18 @@ class Store(models.Model):
 
      '''
     store_id = models.AutoField(primary_key=True)
-    store_name = models.CharField(max_length=30,)
-    owner_first_name = models.CharField(max_length=30)
-    owner_last_name = models.CharField(max_length=30)
-    store_phone = models.CharField(max_length=12)
-    email = models.EmailField(max_length=100)
-    store_url = models.URLField(max_length=200)
-    store_address = models.CharField(max_length=100)
+    store_name = models.CharField(max_length=30)
+    owner_first_name = models.CharField(max_length=30,default='')
+    owner_last_name = models.CharField(max_length=30,default='')
+    store_phone = models.CharField(max_length=12,unique=True,default='')
+    email = models.EmailField(max_length=100,default='')
+    store_url = models.URLField(max_length=200,default='')
+    store_address = models.CharField(max_length=100,default='')
     registration_date = models.DateTimeField(auto_now_add=True)
     # registration_date = models.DateField(default=date.today)
-    store_capacity = models.IntegerField()
-    password = models.CharField(max_length=30)
+    store_capacity = models.IntegerField(default=0)
+    password = models.CharField(max_length=30, null=False,default='')
+    is_email_verified = models.BooleanField(default=False)
 
     def __str__(self):
         """Make the representation of a Store object readable."""

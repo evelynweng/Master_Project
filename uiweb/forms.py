@@ -30,8 +30,8 @@ class LoginForm(ModelForm):
          model = Store
          fields = ['email', 'password']
          labels = {
-            "email": "email",
-            "password": "password"
+            "Email": "email",
+            "P assword": "password"
          }    
          widgets = {
             "email":  forms.TextInput(attrs={'placeholder':'example@gmail.com','autocomplete': 'off'}), 
