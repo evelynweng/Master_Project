@@ -3,6 +3,7 @@ from apidatabase.models import Store
 from django.forms import ModelForm
 from django import forms
 
+
 class StoreRegistrationForm(ModelForm):
     # confirm_password=forms.CharField(widget=forms.PasswordInput())
     class Meta:
@@ -39,3 +40,8 @@ class LoginForm(ModelForm):
          }
          
       
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Store
+        fields = ['store_name', 'owner_first_name', 'owner_last_name', 'store_phone',
+            'store_address', 'store_capacity','profile_pic']

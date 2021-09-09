@@ -9,6 +9,9 @@ from django.utils import timezone
 # Refer to the page for support fields in Django
 # https://docs.djangoproject.com/en/3.1/ref/models/fields/#field-types
 
+def profile_pic_path(instance, filename):  
+    # file will be uploaded to MEDIA_ROOT / user_<id>/<filename>
+    return 'profile_pics/store_id_{0}/{1}'.format(instance.store_id, filename)
 
 class Store(models.Model):
 
@@ -30,6 +33,7 @@ class Store(models.Model):
     store_capacity = models.IntegerField(default=0)
     password = models.CharField(max_length=30, null=False,default='')
     is_email_verified = models.BooleanField(default=False)
+    profile_pic = models.ImageField(default = 'default.jpg' , upload_to = profile_pic_path)
 
     def __str__(self):
         """Make the representation of a Store object readable."""

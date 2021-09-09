@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 #from .models import Store
 from apidatabase.models import Store
-from .forms import StoreRegistrationForm, LoginForm
+from .forms import StoreRegistrationForm, LoginForm,ProfileUpdateForm
 from .decorators import user_login_required
 #from django.contrib.auth import authenticate,login,logout
 from django.views.decorators.cache import cache_control
@@ -175,7 +175,31 @@ def activate_user(request, uidb64, token):
 def registration_success(request):
     return render(request, 'uiweb/success.html')
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@login_required
 def profile(request):
+    #store = request.store
+    info= get_user(request)
+    
+    if request.method == 'POST':
+        profile_update_form = ProfileUpdateForm(request.POST, request.FILES, instance=info)
+       
+        if profile_update_form.is_valid:
+            profile_update_form.save()
+            #messages.success(request, f'Your information has been updated!')
+            messages.add_message(request, messages.SUCCESS,
+                             'Your profile has been updated!')
+            return redirect('Profile')
+    else:
+            profile_update_form = ProfileUpdateForm(instance = info)
+
+    store_id =info.store_id
+    profile_pic = Store.objects.get(store_id = store_id)
+
+    context = {'profile_update_form':profile_update_form,'profile_pic':profile_pic, 'store_name':info.store_name, 'email':info.email}
+    return render(request, 'uiweb/profile.html', context)
+
+"""def profile(request):
     if 'user_id' in request.session:
         user_name = get_user(request)
         firstname = user_name.owner_first_name + "'s profile"
@@ -188,7 +212,7 @@ def profile(request):
         date_joined = user_name.registration_date
         context = {'name':name, 'store_name':store_name,'email':email,'phone':phone,'address':address,'url' : url, 'date_joined':date_joined}
 
-    return render(request, 'uiweb/profile.html', {'context':context})    
+    return render(request, 'uiweb/profile.html', {'context':context})"""    
 
 
 
