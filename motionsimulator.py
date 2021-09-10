@@ -26,11 +26,16 @@ class MotionSimulator:
             kSTOREID:self.store_id,
             kSTOREINOUT:vSTOREOUT
         }
+        
         res = self.send_post_request(send_dict)
+        self.send_post_request_toqueueweb(send_dict) # added by XM for illustration purpose
         return self.get_httpreponse_current_customers(res)
     
     def send_post_request(self,input_dict):
         return requests.post(url = self.API_LOCATION, data = input_dict)
+
+    def send_post_request_toqueueweb(self,input_dict):# added by XM for illustration purpose
+        return requests.post(url = "http://localhost:8080/queueweb/leave", data = input_dict)
     
     def get_httpreponse_current_customers(self, httpresponse) -> int:
         recv_dict =   json.loads(httpresponse.content)

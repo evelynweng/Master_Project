@@ -91,9 +91,10 @@ def customer_register(request,store_name_slug):
                 q = Queue.objects.get_or_create(store = store_tmp,queuedate=datetime.date.today())[0]
                 customer.queue = q
                 customer.Customerueue_id = q.last_Customerueue_id + 1
-                if q.last_Customerueue_id > 0:
-                    former_customer = Customer.objects.get(queue = q, Customerueue_id = q.last_Customerueue_id)
-                    customer.potential_wait_time = former_customer.potential_wait_time + former_customer.number_of_people * store_tmp.store_average_waiting_time_for_person
+                customer.potential_wait_time = q.current_waiting_time + customer.number_of_people * store_tmp.store_average_waiting_time_for_person
+                #if q.last_Customerueue_id > 0:
+                #    former_customer = Customer.objects.get(queue = q, Customerueue_id = q.last_Customerueue_id)
+                #    customer.potential_wait_time = former_customer.potential_wait_time + former_customer.number_of_people * store_tmp.store_average_waiting_time_for_person
                 
                 q.last_Customerueue_id = customer.Customerueue_id
                 q.current_waiting_time = customer.potential_wait_time
@@ -116,22 +117,34 @@ def customer_status(request, store_name_slug, customer_id):
     store_tmp = Store.objects.get(slug=store_name_slug)
     customer = Customer.objects.get(id = customer_id)
     queue = customer.queue
-    number_in_line = queue.number_people_waiting - customer.number_of_people
+    # number_in_line should be indivitual customer 
+    number_in_line = customer.potential_wait_time/store_tmp.store_average_waiting_time_for_person - customer.number_of_people
+    #number_in_line = queue.number_people_waiting - customer.number_of_people
+    cus_num_before = int(number_in_line)
     context_dict = {}
-    context_dict = {'store':store_tmp, 'queue':queue,'customer':customer, 'number_in_line':number_in_line}
+    context_dict = {'store':store_tmp, 'queue':queue,'customer':customer, 'number_in_line':cus_num_before}
     if customer.Customerueue_id == -2:
-        return render(request,'queueweb/customer_ticket.html',context=context_dict)
+        return redirect(reverse('customer_ticket',
+                    kwargs={'store_name_slug':store_name_slug, 'customer_id':customer_id}))
     
-
     return render(request,'queueweb/customer_status.html',context=context_dict) 
 
 def customer_ticket(request,store_name_slug, customer_id):
     # my_dict = {'insert':"You're in the line!"}
     store_tmp = Store.objects.get(slug=store_name_slug)
     customer = Customer.objects.get(id = customer_id)
-    
-    
-    return render(request,'queueweb/customer_ticket.html') 
+    context_dict = {}
+    ticket_dict = {'store':store_tmp.store_name,'customer.id':customer.id, 
+    'customer.number_of_people':customer.number_of_people}
+    customer_ticket = qrcode.make(ticket_dict)
+    customer_ticket_path = 'queueweb/static/' 
+    filename = store_tmp.store_name +'-temp-'+str(customer_id) +'.png'
+    savename = customer_ticket_path + filename
+    print(filename)
+    customer_ticket.save(savename)
+    #save_path = 'queueweb/static/'
+    context_dict = {'customer':customer,'filename':filename}
+    return render(request,'queueweb/customer_ticket.html',context=context_dict) 
 
 def customer_leave(request, store_name_slug, customer_id):
 
@@ -145,8 +158,10 @@ def customer_leave(request, store_name_slug, customer_id):
             return render(request,'queueweb/customer_leave.html',context=context_dict)
 
         else:
+            # modify the left customerqueue id to -1, show every one who is nolonger waitting in the queue, customerueue_id is -1
             customer.Customerueue_id = -1
             customer.save()
+            # the condition when the left customer is middle of the queue, others behand him/her will move forward
             while (cus_q_id_tmp < queue.last_Customerueue_id):
                 cus_next = Customer.objects.get(queue = queue, Customerueue_id = cus_q_id_tmp + 1)
                 cus_next.Customerueue_id = cus_q_id_tmp
@@ -154,13 +169,13 @@ def customer_leave(request, store_name_slug, customer_id):
                 cus_q_id_tmp += 1
                 cus_next.save()
 
-            if cus_q_id_tmp == queue.last_Customerueue_id:
+            #if cus_q_id_tmp == queue.last_Customerueue_id:
         
-                queue.last_Customerueue_id = queue.last_Customerueue_id - 1
-                queue.current_waiting_time = queue.current_waiting_time - customer.number_of_people * store_tmp.store_average_waiting_time_for_person
-                queue.number_people_waiting = queue.number_people_waiting - customer.number_of_people
+            queue.last_Customerueue_id = queue.last_Customerueue_id - 1
+            queue.current_waiting_time = queue.current_waiting_time - customer.number_of_people * store_tmp.store_average_waiting_time_for_person
+            queue.number_people_waiting = queue.number_people_waiting - customer.number_of_people
         
-                queue.save()
+            queue.save()
     
             context_dict = {}
             context_dict = {'store':store_tmp, 'customer':customer }
@@ -176,11 +191,64 @@ def customer_leave(request, store_name_slug, customer_id):
 
 def customer_left_store_test(request, store_name_slug):
     store_tmp = Store.objects.get(slug=store_name_slug)
+    
     queue = Queue.objects.get(store = store_tmp,queuedate=datetime.date.today())
 
     if request.method == 'POST':
         # calculate how many persons could enter the store
+        
+        store_tmp.store_current_count -= 1
+        store_tmp.save()
         diff = store_tmp.store_capacity - store_tmp.store_current_count
+        # if there is no customer in queue
+        # if queue.first_Customerueue_id == queue.last_Customerueue_id:
+        #    return render(request, 'test.html') 
+        # find the customer who is the first in queue
+        customer_enter = Customer.objects.get(queue = queue, Customerueue_id = queue.first_Customerueue_id + 1)
+        # the first cus in queue cannot enter
+        if diff < customer_enter.number_of_people:
+            return render(request,'queueweb/customer_left_store_test.html')
+        
+        # the first cus in queue can enter the store
+        else:
+            cus_q_id_tmp = customer_enter.Customerueue_id
+            # if the cus can enter the store, set it's customerueue_id to -2
+            customer_enter.Customerueue_id = -2
+            # customer_enter.send_ticket() - haven't add this function
+            customer_enter.save()
+            # update all others in queue
+            queue.first_Customerueue_id += 1
+            decreased_time = customer_enter.number_of_people * store_tmp.store_average_waiting_time_for_person
+
+            queue.current_waiting_time = queue.current_waiting_time - decreased_time
+            queue.number_people_waiting = queue.number_people_waiting - customer_enter.number_of_people
+            queue.save()
+            while cus_q_id_tmp < queue.last_Customerueue_id:
+                cus_next = Customer.objects.get(queue = queue, Customerueue_id = cus_q_id_tmp + 1)
+                cus_next.potential_wait_time = cus_next.potential_wait_time - decreased_time
+                cus_next.save()
+                cus_q_id_tmp += 1
+
+    return render(request,'queueweb/customer_left_store_test.html')
+
+@csrf_exempt
+def leave_case(request):
+
+    if request.method == "GET":
+        return HttpResponse("this is GET method")
+    elif request.method == "POST":
+        print("You are here!")
+        
+        req_dict = request.POST.dict()
+        store_id = req_dict.get('store_id')
+
+        store_tmp = Store.objects.get(store_id = store_id)
+        queue = Queue.objects.get_or_create(store = store_tmp,queuedate=datetime.date.today())[0]
+
+        diff = store_tmp.store_capacity - store_tmp.store_current_count
+        # if there is no customer in queue
+        # if queue.first_Customerueue_id == queue.last_Customerueue_id:
+        #    return render(request, 'test.html') 
         # find the customer who is the first in queue
         customer_enter = Customer.objects.get(queue = queue, Customerueue_id = queue.first_Customerueue_id + 1)
         if diff < customer_enter.number_of_people:
@@ -203,7 +271,8 @@ def customer_left_store_test(request, store_name_slug):
                 cus_next.save()
                 cus_q_id_tmp += 1
 
-    return render(request,'queueweb/customer_left_store_test.html')
+        return HttpResponse("this is POST method")
+
 
 @csrf_exempt
 def Customeruery(request):
@@ -268,7 +337,7 @@ def generate_qrcode(store_id):
     # return str(Storercode)
         # completeName = os.path.join(save_path, file_name)
         # img.save(completeName) 
-    
+   
 @csrf_exempt
 def test_case(request):
     input_dict = {"SERVICE":"ENTRY", "store_id":1, "customer_numbers":5}
