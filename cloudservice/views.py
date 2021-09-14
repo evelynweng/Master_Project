@@ -38,7 +38,9 @@ def index(request):
             vMASK: doService().do_detect,
             vCHECKIN: doService().do_checkin,
             vSTARTDETECT: doService().do_start, 
-            vSTOREINOUT:doService().do_store_in_out,
+            vSTOREINOUT: doService().do_store_in_out,
+            vGET_TEMP_REQ: doService().do_get_temperature_request,
+            vTEMP_DATA : doService().do_temperature_check,
         }
 
         ''' 
@@ -52,7 +54,7 @@ def index(request):
         if VALIDTAG not in recv_dict or not (SERVICETAG in recv_dict and recv_dict.get(SERVICETAG, None) in SERVICE):
             return HttpResponseNotFound('<h1>illegal request</h1>')
         
-        print("get the service")
+        # print("get the service")
         request_service = recv_dict[SERVICETAG] # str: login, register, mask
         print("send to the redirect function:",request_service)
         response = SERVICE.get(request_service, doService().do_nothing)(recv_dict)  # forward to designate service module, default: donothing

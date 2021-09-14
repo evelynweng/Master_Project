@@ -28,8 +28,7 @@ class queueHandler:
             stores = Store.objects.filter(store_id = store_id)
             if stores.exists():
                 store = stores.get()
-                if store_in == vSTOREIN :
-                    
+                if store_in == vSTOREIN :                    
                     store.store_current_count += 1
                     store.save()
                 else:
@@ -38,3 +37,15 @@ class queueHandler:
                 return store.store_current_count
             else:
                 return -999
+    
+    def check_exist_thermal_task (self, store_id) -> bool:
+        if store_id:
+            stores = Store.objects.filter(store_id = store_id)
+            if stores.exists():
+                store = stores.get()
+                if store.thermal_task_queue != 0 :
+                    store.thermal_task_queue = 0 # get the task and set task to zero
+                    store.save()
+                    return True
+                else:
+                    return False

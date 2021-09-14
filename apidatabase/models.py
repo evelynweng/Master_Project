@@ -36,6 +36,9 @@ class Store(models.Model):
     store_address = models.CharField(max_length=100)
     registration_date = models.DateTimeField(auto_now_add=True)	
 
+    # for thermal sensor task 
+    thermal_task_queue = models.IntegerField(default=0)
+    thermal_state = models.IntegerField(default=0) # 0: wait, 1:pass, -1:fail
 
     def save(self,*args, **kwargs):
         self.slug = slugify(self.store_name)

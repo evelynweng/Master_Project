@@ -51,9 +51,17 @@ class dataHandler:
         return input_dict.get(keyStoreid,None)
     
     def get_mask_img (self, input_dict):
-        return self.encodeImg_to_img(input_dict.get(keyMaskpic))
+        return self.encodeImg_to_img(input_dict.get(keyMaskpic,None))
 
     def reply_invalid_data(self):
-        return self.dict_to_HttpResponse({keyReply:'invalid image'})
+        return self.dict_to_HttpResponse({keyReply:'invalid data'})
+    
     def get_store_in_out (self, input_dict):
         return input_dict.get(kSTOREINOUT,False)
+        
+    def get_temp_request (self, input_dict):
+        return input_dict.get(kGET_TEMP_REQ,False)
+
+    def get_thermal_data(self,input_dict):
+        # self.encodeImg_to_img(input_dict.get(kTEMP_DATA,None))
+        return input_dict.get(kTEMP_DATA,"36,37")    
