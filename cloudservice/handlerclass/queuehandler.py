@@ -32,7 +32,10 @@ class queueHandler:
                     store.store_current_count += 1
                     store.save()
                 else:
-                    store.store_current_count -= 1
+                    if(store.store_current_count - 1 < 0):
+                        store.store_current_count = 0
+                    else:
+                        store.store_current_count -= 1
                     store.save()
                 return store.store_current_count
             else:

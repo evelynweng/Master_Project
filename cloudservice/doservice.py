@@ -101,9 +101,9 @@ class doService:
             return self.datahandler.reply_invalid_data()
         
         thermal_file = self.datahandler.get_thermal_data(input_dict)
-        # body_temp_pass = detect_temperature (thermal_file)
+        body_temp_pass = detect_temperature (thermal_file)
         print("bodt temp checkpoint2")
-        body_temp_pass = True
+        #body_temp_pass = True
         if body_temp_pass :
             store.thermal_state = 1
         else:
