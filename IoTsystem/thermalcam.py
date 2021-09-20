@@ -15,13 +15,13 @@ frame = np.zeros((24*32,)) # setup temperature array
 
 def thermal_cam_main():
     t_cam =  thermalcamSend()
-    thermalstr = "36,36"
+    #thermalstr = "36,36"
     while True:
         gettask =  t_cam.get_task_from_cloud()        
         if gettask : 
             print("got temp task from server")
             thermalstr = save_temps()
-            print("send temp str")
+            print("send thermalstr:", thermalstr)
             t_cam.send_temperature_to_cloud(thermalstr)
         else:
             time.sleep(0.1)
@@ -32,11 +32,14 @@ def save_temps():
         u = np.mean(frame)
         s = np.std(frame)
         median = np.median(frame)
-        frame[u - 3 * s < frame < u + 3 * s] = median # drop outliers
+        # frame[u - 3 * s < frame < u + 3 * s] = median # drop outliers
+        np.logical_and(u - 3 * s < frame, frame < u + 3 * s ) 
+        frame = median
         # data_array = (np.reshape(frame,mlx_shape)) # reshape to 24x32
         return frame.tostring()
-    except ValueError:
-        return
+    except ValueError as err:
+        print("get body temp err: ", err)
+        raise err 
 
 class thermalcamSend():
     def __init__(self):
