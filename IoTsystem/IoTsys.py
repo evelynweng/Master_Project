@@ -8,6 +8,7 @@ t_pirOut = threading.Thread(target= pir.pir_out_main, args=())
 t_thermalCam = threading.Thread(target= thermalcam.thermal_cam_main, 
                             args=())
 
+print("starting IoT device")
 # exec subprocess
 t_pirIn.start()
 t_pirOut.start()
