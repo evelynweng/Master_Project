@@ -11,7 +11,7 @@ i2c = busio.I2C(board.SCL, board.SDA, frequency=800000) # setup I2C
 mlx = adafruit_mlx90640.MLX90640(i2c) # start MLX90640
 mlx.refresh_rate = adafruit_mlx90640.RefreshRate.REFRESH_2_HZ # set refresh rate
 mlx_shape = (24,32)
-frame = np.zeros((24*32,)) # setup temperature array
+
 
 def thermal_cam_main():
     t_cam =  thermalcamSend()
@@ -28,11 +28,12 @@ def thermal_cam_main():
 
 def save_temps():
     try:
+        frame = np.zeros((24*32,)) # setup temperature array
         mlx.getFrame(frame) # read MLX temperatures
         u = np.mean(frame)
         s = np.std(frame)
         median = np.median(frame)
-        # frame[u - 3 * s < frame < u + 3 * s] = median # drop outliers
+        #frame[u - 3 * s < frame < u + 3 * s] = median # drop outliers
         np.logical_and(u - 3 * s < frame, frame < u + 3 * s ) 
         frame = median
         # data_array = (np.reshape(frame,mlx_shape)) # reshape to 24x32
