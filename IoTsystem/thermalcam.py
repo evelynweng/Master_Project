@@ -6,6 +6,7 @@ import requests
 from keyvaluefordict import *
 from numpy import savetxt, loadtxt
 import json
+import base64
 
 i2c = busio.I2C(board.SCL, board.SDA, frequency=800000) # setup I2C
 mlx = adafruit_mlx90640.MLX90640(i2c) # start MLX90640
@@ -33,11 +34,9 @@ def save_temps():
         u = np.mean(frame)
         s = np.std(frame)
         median = np.median(frame)
-        #frame[u - 3 * s < frame < u + 3 * s] = median # drop outliers
-        np.logical_and(u - 3 * s < frame, frame < u + 3 * s ) 
-        frame = median
+        frame[(u - 3 * s > frame) | (u + 3 * s < frame)] = median
         # data_array = (np.reshape(frame,mlx_shape)) # reshape to 24x32
-        return frame.tostring()
+        return base64.b64encode(frame.tostring())
     except ValueError as err:
         print("get body temp err: ", err)
         raise err 
