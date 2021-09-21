@@ -57,9 +57,10 @@ class doService:
 
         if pass_mask.bool_val and pass_temp.bool_val : 
             reply_dict = self.queuehandler.query_status_and_get_dict(store_id, customer_numbers)
-            print("mask/temp true detection result: ", reply_dict)
+            print("PASS detection result: ", reply_dict)
         else:
             reply_dict = {keyReply:False, kQRCODE:None}
+            print("Fail detection result: ", reply_dict)
         
         return self.datahandler.dict_to_HttpResponse(reply_dict)
 
@@ -87,7 +88,6 @@ class doService:
         return self.datahandler.dict_to_HttpResponse(reply_dict)
     
     def do_temperature_check(self, input_dict) -> HttpResponse:
-        print("body_temp_check_entry")
         store_id = self.datahandler.get_store_id(input_dict)
         if not store_id:
             return self.datahandler.reply_invalid_data()
@@ -102,7 +102,6 @@ class doService:
         
         thermal_file = self.datahandler.get_thermal_data(input_dict)
         body_temp_pass = detect_temperature (thermal_file)
-        print("bodt temp checkpoint2")
         #body_temp_pass = True
         if body_temp_pass :
             store.thermal_state = 1
@@ -127,9 +126,11 @@ class doService:
 
     def thread_detect_mask_result(self, input_dict, pass_mask):
         mask_image = self.datahandler.get_mask_img(input_dict)
-        if mask_image.any():        
+        
+        if mask_image.any():       
+            print("mask detect result ret: ", detect_mask(mask_image)) 
             pass_mask.set_bool_val( detect_mask(mask_image))
-        print("get mask_detect result:", pass_mask.bool_val)
+            print("get mask_detect result:", pass_mask.bool_val)
 
     def thread_temperature_detect_result(self, store_id, pass_temp):
         put_task = self.put_temperature_request_in_task_queue(store_id)
@@ -146,7 +147,7 @@ class doService:
                 pass_temp.set_bool_val (True)
             else :
                 pass_temp.set_bool_val (False)
-            print("get body_temp result:", pass_temp.bool_val)
+            print("check body_temp result:", pass_temp.bool_val)
         else:
             print("put task fail")
 
