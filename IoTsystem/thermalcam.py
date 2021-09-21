@@ -33,9 +33,7 @@ def save_temps():
         u = np.mean(frame)
         s = np.std(frame)
         median = np.median(frame)
-        #frame[u - 3 * s < frame < u + 3 * s] = median # drop outliers
-        np.logical_and(u - 3 * s < frame, frame < u + 3 * s ) 
-        frame = median
+        frame[(u - 3 * s > frame) | (u + 3 * s < frame)] = median
         # data_array = (np.reshape(frame,mlx_shape)) # reshape to 24x32
         return frame.tostring()
     except ValueError as err:
