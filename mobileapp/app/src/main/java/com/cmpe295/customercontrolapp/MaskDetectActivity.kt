@@ -87,7 +87,7 @@ class MaskDetectActivity : AppCompatActivity() {
         val encodedImage: String = Base64.encodeToString(byteArrayImage, Base64.DEFAULT)
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://192.168.1.133:8080")
+            .baseUrl("http://10.0.2.2:8080/")
             .build()
 
         val service = retrofit.create(APIService::class.java)

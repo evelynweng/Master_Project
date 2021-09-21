@@ -43,7 +43,7 @@ class DashboardActivity : AppCompatActivity() {
     private fun startDetect() {
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://192.168.1.133:8080")
+            .baseUrl("http://10.0.2.2:8080/")
             .build()
 
         val service = retrofit.create(APIService::class.java)
