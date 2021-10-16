@@ -10,13 +10,14 @@ class queueHandler:
         reply_dict = dataHandler().get_queue_dictresponse(query_capacity)
         return reply_dict
 
-    '''
-    def queue_status(self, store_id) -> bool :
-        query_capacity = {keyStoreid:store_id, keyService: vQUERYCAPACITY}
-        reply_dict = dataHandler().get_database_dictresponse(query_capacity)
-        can_enter = reply_dict.get(keyReply,False)
-        return can_enter
-    '''
+    def checkin_with_queue(self, input_dict):
+        store_id = self.datahandler.get_store_id(input_dict)
+        if not store_id:
+            return {kREPLY:False, kCUSTOMERNUMBERS:0}
+        verify_checkin = input_dict
+        reply_dict = dataHandler.get_queue_dictresponse(verify_checkin)
+        return reply_dict
+    
 
     def get_qrcode(self, store_id) -> str:
         get_qrcode_dict = {keyService: qrCode, keyStoreid: store_id, }

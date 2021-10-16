@@ -1,5 +1,6 @@
 
 #from os import wait
+from json.encoder import py_encode_basestring
 import threading
 from django.http import HttpResponse, HttpResponseNotFound
 from tensorflow.python.ops.gen_array_ops import empty
@@ -69,8 +70,17 @@ class doService:
         return self.datahandler.dict_to_HttpResponse(reply_dict)
 
     def do_checkin(self,input_dict) -> HttpResponse:
-        
-        return HttpResponse("not use")
+        # store id, customer id
+        '''
+        (1) scann qrcode-> get parse dict 
+        (2) mobile app: re-pack the decoded-dict to format that can send to cloudserver 
+        (3) cloudserver re-pack-> queue system 
+        (4) q system reply->cloudserver (bool + customer number) 
+        (5) cloudserver-> mobil app (bool + customer number)
+        '''
+        reply_dict =  self.queuehandler.checkin_with_queue(input_dict)
+        return self.datahandler.dict_to_HttpResponse(reply_dict)
+
     
     def do_start(self, input_dict) -> HttpResponse:
         return self.datahandler.get_database_httpresponse(input_dict)
@@ -131,8 +141,8 @@ class doService:
         app_image = self.datahandler.get_mask_img(input_dict)
         # get if is vaccinated
         vaccinated = self.datahandler.get_vaccination_status(input_dict)
-        
-        if vaccinated:
+
+        if not vaccinated:
         # if vaccinated: get the img, store in database
             if app_image.any():       
                 print("mask detect result ret: ", detect_mask(app_image)) 
@@ -140,12 +150,14 @@ class doService:
                 print("get mask_detect result:", pass_mask.bool_val)
         
         else: # else: do mask detect 
-            self.save_vaccination_card_into_store(input_dict, app_image)
+            self.save_vaccination_card_into_store(input_dict)
+            pass_mask.set_bool_val( True)
+            print("get mask_detect result:", pass_mask.bool_val)
 
     def thread_temperature_detect_result(self, store_id, pass_temp):
         put_task = self.put_temperature_request_in_task_queue(store_id)
         if put_task:
-            timeout = time.time() + 3 # 2s
+            timeout = time.time() + 4 # 3s
             stores = Store.objects.filter(store_id = store_id)
             store = stores.get()
             while store.thermal_state == 0 :
@@ -163,12 +175,14 @@ class doService:
         else:
             print("put task fail")
     
-    def save_vaccination_card_into_store(self, input_dict, app_img):
+    def save_vaccination_card_into_store(self, input_dict):
         store_id = self.datahandler.get_store_id(input_dict)
+        vac_card_imgstr = input_dict.get(keyMaskpic,None)
         stores = Store.objects.filter(store_id = store_id)
         store = stores.get()
-        store.vaccination_card = app_img
+        store.vaccination_card = vac_card_imgstr
         store.save()
+        print("save vaccimage: ", type(vac_card_imgstr))
 
 class BoolToken:
     def __init__(self):

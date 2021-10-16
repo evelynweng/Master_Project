@@ -7,7 +7,7 @@ class MotionSimulator:
     def __init__(self, store_id, customers):
         self.store_id = store_id
         self.customers = customers
-        self.API_LOCATION  = "http://localhost:8080/cloudservice/"
+        self.API_LOCATION  = sys_API_LOCATION
 
     def enter_the_store(self):
         send_dict = {

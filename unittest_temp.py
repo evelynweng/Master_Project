@@ -74,7 +74,7 @@ class TestCloudservice(unittest.TestCase):
     
 class BuidTestServiceRequest:
     def __init__(self):
-        self.API_LOCATION  = "http://localhost:8080/cloudservice/"
+        self.API_LOCATION  = sys_API_LOCATION
         self.STOREPHONE = '12345678'
         self.PASSWORD='testpwd'
         self.STORENAME='KFC'
@@ -84,13 +84,13 @@ class BuidTestServiceRequest:
     def mask_true(self) -> HttpResponse:
         with open('test.jpg', "rb") as image_file:
             img_str = base64.b64encode(image_file.read())
-        send_dict = {kVALID : 295, kSERVICE:'MASK',kSTOREID:1, kMASKPIC:img_str}   
+        send_dict = {kVALID : 295, kSERVICE:'MASK',kSTOREID:1, kMASKPIC:img_str,kVACCINATION:False}   
         return self.send_post_request_and_get_response_content(send_dict)
     
     def mask_false(self) -> HttpResponse:
         with open('test02.jpg', "rb") as image_file:
             img_str = base64.b64encode(image_file.read())
-        send_dict = {kVALID : 295, kSERVICE:'MASK',kSTOREID:1, kMASKPIC:img_str}
+        send_dict = {kVALID : 295, kSERVICE:'MASK',kSTOREID:1, kMASKPIC:img_str, kVACCINATION:False}
         return self.send_post_request_and_get_response_content(send_dict)
 
     def register_true(self) ->HttpResponse.content:

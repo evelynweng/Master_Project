@@ -28,7 +28,7 @@ def save_temps():
 
 class thermalcamSend():
     def __init__(self):
-        self.API_LOCATION  = "http://localhost:8080/cloudservice/"
+        self.API_LOCATION  = sys_API_LOCATION
         self.STOREID = 1
 
     def get_task_from_cloud(self) -> bool :

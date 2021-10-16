@@ -72,6 +72,6 @@ def detect_mask(image):
             # probability = max(mask, noMask) * 100
             
             return maskDetected
-        
+        return False 
 #result = detect_mask('images/example_01.jpg')
 #print(result)

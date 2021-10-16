@@ -3,6 +3,11 @@ Between Mobilapp and cloudservice
 store_id=1, store_name="KFC", store_phone =' 12345678', password = 'testpwd'
 keyvalue same as database column
 '''
+# system
+sys_API_LOCATION = "http://localhost:8080/cloudservice/"
+sys_Q_API_LOCATION = "http://localhost:8080/queueweb/"
+sys_DATABASE_API_LOCATION = "http://localhost:8080/apidatabase/"
+
 # key for dict:
 kVALID = 'CMPE295'
 
@@ -31,7 +36,7 @@ kGET_TEMP_REQ = 'temp_request'
 kTEMP_DATA = 'temp_data'
 
 kCUSTOMERNUMBERS = 'customer_numbers' # for queue app
-
+kCUSTOMERID = "customer_id"
 kVACCINATION = 'vacc_card' # for have vaccination card
 
 # values for dict:
