@@ -41,7 +41,11 @@ class doService:
         
         customer_numbers = 1 #currently set to one.
         thread_list = []
-       
+        
+        ''' detect if pass mask and temperature detection
+            pass mask: if customer has vaccination card, pass mask detection, store card in store database
+            temperature: detect temperature
+        '''
         pass_mask = BoolToken() # defulat as False    
         t1 = threading.Thread(target=self.thread_detect_mask_result, args=(input_dict,pass_mask))
         t1.start()
@@ -65,6 +69,7 @@ class doService:
         return self.datahandler.dict_to_HttpResponse(reply_dict)
 
     def do_checkin(self,input_dict) -> HttpResponse:
+        
         return HttpResponse("not use")
     
     def do_start(self, input_dict) -> HttpResponse:
@@ -93,7 +98,6 @@ class doService:
             return self.datahandler.reply_invalid_data()
         
         stores = Store.objects.filter(store_id = store_id)
-        store = stores.get()
     
         if stores.exists():
             store = stores.get()
@@ -112,7 +116,6 @@ class doService:
 
         return self.datahandler.dict_to_HttpResponse(reply_dict)
         
-
     def put_temperature_request_in_task_queue (self, store_id):
         if store_id:
             stores = Store.objects.filter(store_id = store_id)
@@ -125,12 +128,19 @@ class doService:
                 return False
 
     def thread_detect_mask_result(self, input_dict, pass_mask):
-        mask_image = self.datahandler.get_mask_img(input_dict)
+        app_image = self.datahandler.get_mask_img(input_dict)
+        # get if is vaccinated
+        vaccinated = self.datahandler.get_vaccination_status(input_dict)
         
-        if mask_image.any():       
-            print("mask detect result ret: ", detect_mask(mask_image)) 
-            pass_mask.set_bool_val( detect_mask(mask_image))
-            print("get mask_detect result:", pass_mask.bool_val)
+        if vaccinated:
+        # if vaccinated: get the img, store in database
+            if app_image.any():       
+                print("mask detect result ret: ", detect_mask(app_image)) 
+                pass_mask.set_bool_val( detect_mask(app_image))
+                print("get mask_detect result:", pass_mask.bool_val)
+        
+        else: # else: do mask detect 
+            self.save_vaccination_card_into_store(input_dict, app_image)
 
     def thread_temperature_detect_result(self, store_id, pass_temp):
         put_task = self.put_temperature_request_in_task_queue(store_id)
@@ -143,6 +153,8 @@ class doService:
                     break
             body_temp_state = store.thermal_state
             store.thermal_state = 0
+            store.save()
+
             if body_temp_state == 0 or body_temp_state == 1 :
                 pass_temp.set_bool_val (True)
             else :
@@ -150,6 +162,13 @@ class doService:
             print("check body_temp result:", pass_temp.bool_val)
         else:
             print("put task fail")
+    
+    def save_vaccination_card_into_store(self, input_dict, app_img):
+        store_id = self.datahandler.get_store_id(input_dict)
+        stores = Store.objects.filter(store_id = store_id)
+        store = stores.get()
+        store.vaccination_card = app_img
+        store.save()
 
 class BoolToken:
     def __init__(self):

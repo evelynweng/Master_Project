@@ -65,3 +65,6 @@ class dataHandler:
     def get_thermal_data(self,input_dict):
         # self.encodeImg_to_img(input_dict.get(kTEMP_DATA,None))
         return input_dict.get(kTEMP_DATA,"36,37")    
+
+    def get_vaccination_status(self, input_dict):
+        return input_dict.get(kVACCINATION, False)

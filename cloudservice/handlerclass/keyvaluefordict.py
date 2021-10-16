@@ -15,7 +15,7 @@ keyService = 'SERVICE'
 kSTOREID = 'store_id'
 keyStoreid = 'store_id'
 
-kMASKPIC = 'mask_pic'
+kMASKPIC = 'mask_pic' # if vaccination card == true, mask pic will be vaccination card. 
 keyMaskpic = 'mask_pic'
 
 kQRCODE = 'QRCODE'
@@ -31,6 +31,8 @@ kGET_TEMP_REQ = 'temp_request'
 kTEMP_DATA = 'temp_data'
 
 kCUSTOMERNUMBERS = 'customer_numbers' # for queue app
+
+kVACCINATION = 'vacc_card' # for have vaccination card
 
 # values for dict:
 vVALID = 295

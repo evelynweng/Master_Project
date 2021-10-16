@@ -40,6 +40,9 @@ class Store(models.Model):
     thermal_task_queue = models.IntegerField(default=0)
     thermal_state = models.IntegerField(default=0) # 0: wait, 1:pass, -1:fail
 
+    # for storing vaccination card
+    vaccination_card = models.TextField() # store the card image in the form of json text
+
     def save(self,*args, **kwargs):
         self.slug = slugify(self.store_name)
         super(Store, self).save(*args, **kwargs)
