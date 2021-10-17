@@ -81,11 +81,48 @@ class Customer(models.Model):
     last_name = models.CharField(max_length=50, default = "YYY")
     phone = models.CharField(max_length=50, default="XXX-XXX-XXXX")
     number_of_people = models.IntegerField(default=-1)
-    join_time = models.TimeField(auto_now_add=True)
+    join_time = models.DateTimeField(default=timezone.now)
     #current_waiting_time_individual = models.IntegerField(default=-1)
     potential_wait_time = models.IntegerField(default=-1)
     #real_wait_time = models.IntegerField(default=-1)
+    #record the time when customer gets the access to the store
+    time_get_access = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.phone
 
+
+
+
+
+class Advertisement(models.Model):  
+    ads_image_path = 'queueweb/media/' 
+    store_id = models.ForeignKey(Store, on_delete = models.CASCADE, to_field='store_id',null=True)
+    ad_id =  models.AutoField(primary_key=True)
+    #discount = models.IntegerField(default=0,
+    #    validators=[MaxValueValidator(100), MinValueValidator(0)]) #in percentage
+    ad_code = models.CharField(max_length=20)
+    ad_image = models.ImageField(upload_to = ads_image_path)
+    ad_description = models.CharField(max_length = 100,default="")
+    start_date = models.DateTimeField(default=timezone.now)
+    end_date = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return "{ad_id}:{ad_code}".format(
+            ad_id=self.ad_id, 
+            ad_code=self.ad_code
+            )
+
+class PromoCode(models.Model):
+    store_id = models.ForeignKey(Store, on_delete = models.CASCADE)
+    promo_id =  models.AutoField(primary_key=True)
+    discount = models.IntegerField(default=0) # added now
+    promo_code = models.CharField(max_length=20)
+    wait_time = models.IntegerField(default = 30)
+    is_active = models.BooleanField(default=False)
+    promo_description = models.CharField(max_length = 100,default="")
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+
+    def __str__(self):
+        return str(self.promo_code)

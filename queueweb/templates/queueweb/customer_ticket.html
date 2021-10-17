@@ -13,11 +13,36 @@
         <div>
             <h3>Hi,{{customer.first_name}}!
             <br>It's Your Turn!
+            <br>Your join time is {{customer.join_time}}
+            <br>The access time is {{customer.time_get_access}}
+            <br>The waiting time is {{timediff}} min.
             <br>Here's Your customer ticket!</h3>
+
              <img src="{%static filename %}" >
         </div>
     </div>
 {% endblock %}
+
+{% block ad_block %}
+    <div class = "container">
+        {% if promocodes %} 
+            {% for promocode in promocodes %} 
+                <hr w-100>
+                
+                <!--<p class="carousel-caption h5">Enjoy Your SCCS Exlusive Coupon Please! </p>-->
+                <p class="h2"> {{ promocode.promo_description }} {{ promocode.promo_code }}</p>
+            {% endfor%}
+    
+            
+        {% else %}
+        <hr w-100>
+        <p class="h2"> The store has all good stuff inside, come in and check it out!  </p>
+        {% endif %}
+    </div>
+
+    {% include 'queueweb/advertisement.html' %}
+{% endblock %}
+
 
 
 

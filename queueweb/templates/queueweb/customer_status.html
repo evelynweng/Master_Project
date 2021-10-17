@@ -52,7 +52,7 @@
                 <input type="submit" class="form-label" name="Leave the Queue!" value="Leave the Queue!"id="" >
                     
             </form> 
-            <form action="">
+            <form method="post" action="/queueweb/store/{{ store.slug }}/{{ customer.id }}/customer_update">
                 <input type="submit" class="form-label" name="Update information!" value="Update information!" id="" >   
             </form>
         </div>
@@ -60,7 +60,9 @@
 </div>
 {% endblock %}
 
-
+{% block ad_block %}
+    {% include 'queueweb/advertisement.html' %}
+{% endblock %}
 
 
 

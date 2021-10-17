@@ -1,0 +1,19 @@
+ <!--this include should get store and advertisement from the called page </p>-->
+
+
+<div class = "container">
+    {% if advertisements %} 
+    {% for advertisement in advertisements %} 
+        <hr w-100>
+        <img src="{{ advertisement.ad_image.url }}" class="img-fluid img-thumbnail mx-auto d-block w-100" alt="Responsive image">
+        <!--<p class="carousel-caption h5">Enjoy Your SCCS Exlusive Coupon Please! </p>-->
+        <p class="h2"> {{ advertisement.ad_description }} </p>
+    {% endfor%}
+
+
+
+    {% else %}
+    <hr w-100>
+    <p class="h2"> The store has all good stuff inside, come in and check it out!  </p>
+    {% endif %}
+</div>
