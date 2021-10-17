@@ -1,0 +1,64 @@
+{%extends "uiweb/base.html"%}
+{%load static%}
+{% block content%}
+
+<style>
+    .card {
+        margin-top: 0px;
+        width: 90%;
+        margin-bottom: 175px;
+    }
+    .list-group {
+	    list-style: decimal inside;
+    }
+
+    .list-group-item {
+	    display: list-item;
+    }
+</style>
+<div class=' card shadow mb-3 rounded content-section mx-auto '>
+    
+    <div class="card-body">
+        <legend>Here are the  simple steps to follow</legend>
+        
+        <div class="card-text ">
+            <ol class="list-group">
+                <li class="list-group-item" >Register on www.sccs.com.</li>
+                <li class="list-group-item">Verify your email to activate your account.</li>
+                <li class="list-group-item">On your tablet, install our mask detection app <a href="#">here</a>.</li>
+                <li class="list-group-item">We will install the devices(motion sensors and thermal camera) in your store.</li>
+            </ol>
+        </div>
+        <br> <br> 
+        <legend>How it works?</legend>
+        <div>
+            <div>
+                <img src="{% static 'uiweb/store_setup.png' %}" alt="Store setup">
+            </div>
+            <br>
+            <ol class="list-group">
+                <li class="list-group-item">Customer arrives at the store entry.</li>
+                <li class="list-group-item">System detects if customer is wearing a mask using app installed on the tablet and camera.</li>
+                <li class="list-group-item">System checks the body temperature of customer using thermal sensor.</li>
+                <li class="list-group-item" >Motion sensor installed at the entrance detects when customer enters and keeps the count of customers in the store.</li>
+                <li class="list-group-item">Motion sensor installed at the exit detects when customer leaves and updates the customer count.</li>
+            </ol>
+
+            <div>
+                <p><h5>If store has reached the maximum occupancy, customer need to wait for their turn.</h5></p>
+                <ol class="list-group">
+                    
+                    <li class="list-group-item">Customer will scan the QR which is displayed on the tablet.</li>
+                    <li class="list-group-item">Customer can fill the form online and to join the queue.</li>
+                    <li class="list-group-item">They may stay in the queue or leave.</li>
+                    <li class="list-group-item">To encourage customers to stay in the queue, we display the offers and free credits they get at while they shop your store,if any.</li>
+                    <li class="list-group-item">Message will be sent to customers when its their turn to enter the store.</li>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock content %}
