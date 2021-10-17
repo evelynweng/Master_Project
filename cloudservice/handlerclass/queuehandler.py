@@ -10,13 +10,14 @@ class queueHandler:
         reply_dict = dataHandler().get_queue_dictresponse(query_capacity)
         return reply_dict
 
-    '''
-    def queue_status(self, store_id) -> bool :
-        query_capacity = {keyStoreid:store_id, keyService: vQUERYCAPACITY}
-        reply_dict = dataHandler().get_database_dictresponse(query_capacity)
-        can_enter = reply_dict.get(keyReply,False)
-        return can_enter
-    '''
+    def checkin_with_queue(self, input_dict):
+        store_id = self.datahandler.get_store_id(input_dict)
+        if not store_id:
+            return {kREPLY:False, kCUSTOMERNUMBERS:0}
+        verify_checkin = input_dict
+        reply_dict = dataHandler.get_queue_dictresponse(verify_checkin)
+        return reply_dict
+    
 
     def get_qrcode(self, store_id) -> str:
         get_qrcode_dict = {keyService: qrCode, keyStoreid: store_id, }
@@ -28,13 +29,27 @@ class queueHandler:
             stores = Store.objects.filter(store_id = store_id)
             if stores.exists():
                 store = stores.get()
-                if store_in == vSTOREIN :
-                    
+                if store_in == vSTOREIN :                    
                     store.store_current_count += 1
                     store.save()
                 else:
-                    store.store_current_count -= 1
+                    if(store.store_current_count - 1 < 0):
+                        store.store_current_count = 0
+                    else:
+                        store.store_current_count -= 1
                     store.save()
                 return store.store_current_count
             else:
                 return -999
+    
+    def check_exist_thermal_task (self, store_id) -> bool:
+        if store_id:
+            stores = Store.objects.filter(store_id = store_id)
+            if stores.exists():
+                store = stores.get()
+                if store.thermal_task_queue != 0 :
+                    store.thermal_task_queue = 0 # get the task and set task to zero
+                    store.save()
+                    return True
+                else:
+                    return False

@@ -3,6 +3,11 @@ Between Mobilapp and cloudservice
 store_id=1, store_name="KFC", store_phone =' 12345678', password = 'testpwd'
 keyvalue same as database column
 '''
+# system
+sys_API_LOCATION = "http://localhost:8080/cloudservice/"
+sys_Q_API_LOCATION = "http://localhost:8080/queueweb/"
+sys_DATABASE_API_LOCATION = "http://localhost:8080/apidatabase/"
+
 # key for dict:
 kVALID = 'CMPE295'
 
@@ -15,7 +20,7 @@ keyService = 'SERVICE'
 kSTOREID = 'store_id'
 keyStoreid = 'store_id'
 
-kMASKPIC = 'mask_pic'
+kMASKPIC = 'mask_pic' # if vaccination card == true, mask pic will be vaccination card. 
 keyMaskpic = 'mask_pic'
 
 kQRCODE = 'QRCODE'
@@ -25,24 +30,33 @@ kSTOREPHONE ='store_phone'
 kPASSWORD = 'password'
 kSTORENAME = 'store_name'
 kSTORECAPACITY ='store_capacity'
-kSTOREINOUT = 'store_in_out'
 
-kCUSTOMERNUMBERS = 'customer_numbers'
+kSTOREINOUT = 'store_in_out'
+kGET_TEMP_REQ = 'temp_request'
+kTEMP_DATA = 'temp_data'
+
+kCUSTOMERNUMBERS = 'customer_numbers' # for queue app
+kCUSTOMERID = "customer_id"
+kVACCINATION = 'vacc_card' # for have vaccination card
 
 # values for dict:
 vVALID = 295
+
 # SERVICE value
 vLOGIN = 'LOGIN'
 vREGISTER = 'REGISTER'
 vMASK = 'MASK'
 vCHECKIN ='CHECKIN'
 vSTARTDETECT = 'STARTDETECT'
-vSTOREINOUT = 'store_in_Out'
+
+vSTOREINOUT = 'store_in_out'
+vGET_TEMP_REQ = 'temp_request'
+vTEMP_DATA = 'temp_data'
 
 # Database API replated
 vQUERYCAPACITY = 'ENTRY'
 
-# vfor store in/out
+# value for PIR sensor - store in/out
 vSTOREIN = 'True'
 vSTOREOUT = 'False'
 
