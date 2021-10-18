@@ -74,21 +74,21 @@ if __name__ == '__main__':
             #ms.validate_entry()
             action_2 = input("Enter your choice of store id: ")
             action_3 = input("Enter your choice of customer number: ")
-            store_id = int(action_2);
-            customer_number = int(action_3);
+            store_id = int(action_2)
+            customer_number = int(action_3)
             ms.validate_entry(store_id,customer_number)
         elif action == '5':
             action_2 = input("Enter your choice of store id: ")
             action_3 = input("Enter your choice of customer number: ")
             action_4 = input("Enter your choice of phone number: ")
-            store_id = int(action_2);
-            customer_number = int(action_3);
+            store_id = int(action_2)
+            customer_number = int(action_3)
             ms.validate_register(store_id,customer_number,action_4)
         elif action == '6':
             action_2 = input("Enter your choice of store id: ")
             action_3 = input("Enter your choice of customer id: ")
-            store_id = int(action_2);
-            customer_id = int(action_3);
+            store_id = int(action_2)
+            customer_id = int(action_3)
             ms.validate_checkin(store_id,customer_id)
         else:
             print ("wrong option!")
