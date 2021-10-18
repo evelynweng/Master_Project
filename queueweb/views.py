@@ -104,6 +104,7 @@ def queue_status(request, store_name_slug):
 
         # Retrieve all of the associated queues
         # The filter() will return a list of queues or an empty list
+        print(datetime.date.today())
         queue = Queue.objects.get_or_create(store = store_tmp, queuedate = datetime.date.today())[0]
 
         
@@ -188,14 +189,23 @@ def customer_register(request,store_name_slug):
                 customer.store = store_tmp
                 q = Queue.objects.get_or_create(store = store_tmp,queuedate=datetime.date.today())[0]
                 customer.queue = q
+                customer.Customerueue_id = q.last_Customerueue_id + 1
                 customer.save() 
                 customer_id = customer.id
                 # save the customer to the db
 
                 # update the queue time based on customer information and save updated queue and customer
                 queue_manager().update_queue_time_uponregister(customer)
-         
-                # direct the user to customer_status webpage
+
+
+                #
+                siteaddress = queue_manager().WEBSITEHOST+ reverse('customer_status',kwargs={'store_name_slug':store_name_slug, 'customer_id':customer_id})
+                message_to_send = 'Thanks '+ customer.first_name + ' for registering in ' + store_tmp.store_name +'. Your status can be checked at this link: '+ siteaddress
+                try:
+                    queue_manager().send_sms(message_to_send,'8478044651')
+                except:
+                    print('Unable to send the SMS to the given number')
+                #direct the user to customer_status webpage
                 return redirect(reverse('customer_status',
                                        kwargs={'store_name_slug':store_name_slug, 'customer_id':customer_id}))
         else:
@@ -203,6 +213,7 @@ def customer_register(request,store_name_slug):
             print(form.errors)
     context_dict={'form':form, 'store':store_tmp }
     context_dict['advertisements'] = advertiment_list_by_store(store_tmp)
+    
     return render(request, 'queueweb/customer_register.html', context=context_dict)
 
 def customer_status(request, store_name_slug, customer_id):
@@ -215,10 +226,14 @@ def customer_status(request, store_name_slug, customer_id):
     cus_num_before = int(number_in_line)
     context_dict = {}
     context_dict = {'store':store_tmp, 'queue':queue,'customer':customer, 'number_in_line':cus_num_before}
+    context_dict['advertisements'] = advertiment_list_by_store(store_tmp)
     if customer.Customerueue_id == -2:
         return redirect(reverse('customer_ticket',
                     kwargs={'store_name_slug':store_name_slug, 'customer_id':customer_id}))
-    context_dict['advertisements'] = advertiment_list_by_store(store_tmp)
+    elif customer.Customerueue_id < 0:
+         return redirect(reverse('customer_leave',
+                    kwargs={'store_name_slug':store_name_slug, 'customer_id':customer_id}))       
+    
     return render(request,'queueweb/customer_status.html',context=context_dict) 
 
 
@@ -230,8 +245,7 @@ def customer_ticket(request,store_name_slug, customer_id):
     # get the promocode (not include active)
     promocodes = PromoCode.objects.filter(store_id = store_tmp,start_date__lte=timezone.now(),end_date__gte=timezone.now(),wait_time__lte=real_wait_time)
     context_dict = {}
-    ticket_dict = {'store':store_tmp.store_name,'customer.id':customer.id, 
-    'customer.number_of_people':customer.number_of_people}
+    ticket_dict = {'store.id':store_tmp.store_id,'customer.id':customer.id}
     customer_ticket = qrcode.make(ticket_dict)
     customer_ticket_path = 'queueweb/static/' 
     filename = store_tmp.store_name +'-temp-'+str(customer_id) +'.png'

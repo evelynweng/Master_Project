@@ -19,12 +19,18 @@ from io import BytesIO
 import requests
 import json
 
+from twilio.rest import Client
+
 
 class queue_manager:
 
     def __init__(self):
         self.buffer_message_confirm_time = 10 # unit is min
         self.buffer_checkin_confirm_time = 30 # unit is min
+        self.TWILIO_ACCOUNT_SID = 'ACf2bc86b8d33e00d3d4b3eb74c60ab12a'
+        self.TWILIO_NUMBER = '15075775291'
+        self.TWILIO_AUTH_TOKEN = 'b2ef349f51c89f134f0fbd12606d1233'
+        self.WEBSITEHOST = 'http://192.168.0.15:8080'
 
     def update_queue(self, store_id):
         store_tmp = Store.objects.get(store_id = store_id)
@@ -48,6 +54,14 @@ class queue_manager:
                 # get the qualified customer's join time and get access time to calculate the actual waiting time
                 customer_enter.time_get_access = timezone.now()
                 customer_enter.Customerueue_id = -2
+
+
+                siteaddress = queue_manager().WEBSITEHOST+ reverse('customer_status',kwargs={'store_name_slug':store_tmp.slug, 'customer_id':customer_enter.id})
+                message_to_send = 'Thanks '+ customer_enter.first_name + ' for your waiting. You can now entry ' +store_tmp.store_name +' and your ticket can be checked at this link: '+ siteaddress
+                try:
+                    self.send_sms(message_to_send,'8478044651')
+                except:
+                    print('Unable to send the SMS to the given number')
                 # customer_enter.send_ticket() - haven't add this function
                 customer_enter.save()
                 queue.first_Customerueue_id += 1
@@ -177,3 +191,12 @@ class queue_manager:
             print("This Customer already exist ")
             customer_id = None
             return False, customer_id
+
+
+    def send_sms(self,message_string, recipient):
+        message_to_broadcast = message_string
+        client = Client(self.TWILIO_ACCOUNT_SID, self.TWILIO_AUTH_TOKEN)
+        client.messages.create(to=recipient,
+                            from_=self.TWILIO_NUMBER,
+                            body=message_to_broadcast)
+        return True

@@ -7,7 +7,9 @@ class QueueValidator:
     def __init__(self, store_id, customers):
         self.store_id = store_id
         self.customers = customers
-        self.API_LOCATION  = "http://localhost:8080/cloudservice/"
+        self.HOSTADDRESS = "http://192.168.0.15:8080"
+        self.API_LOCATION  = self.HOSTADDRESS + "/cloudservice/"
+        self.QUEUEWEB_LOCATION = self.HOSTADDRESS + "/queueweb/"
 
     def enter_the_store(self):
         send_dict = {
@@ -33,18 +35,18 @@ class QueueValidator:
     
     def validate_register(self, store_id, custoer_number, phone_number):
         input_dict = {"SERVICE":"REGISTER", "store_id":store_id, "customer_numbers":custoer_number, "phone_number":phone_number}
-        return requests.post(url = "http://localhost:8080/queueweb/", data = input_dict)           
+        return requests.post(url =self.QUEUEWEB_LOCATION, data = input_dict)           
     
     def validate_entry(self, store_id, custoer_number):
         input_dict = {"SERVICE":"ENTRY", "store_id":store_id, "customer_numbers":custoer_number}
-        return requests.post(url = "http://localhost:8080/queueweb/", data = input_dict)    
+        return requests.post(url = self.QUEUEWEB_LOCATION, data = input_dict)    
     
     def send_post_request(self,input_dict):
         return requests.post(url = self.API_LOCATION, data = input_dict)
 
     def send_post_request_toqueueweb(self,store_id):# added by XM for illustration purpose
         input_dict = {"SERVICE":"LEAVE", "store_id":store_id}
-        return requests.post(url = "http://localhost:8080/queueweb/", data = input_dict)
+        return requests.post(url = self.QUEUEWEB_LOCATION, data = input_dict)
     
     def get_httpreponse_current_customers(self, httpresponse) -> int:
         recv_dict =   json.loads(httpresponse.content)
@@ -52,7 +54,7 @@ class QueueValidator:
     
     def validate_checkin(self, store_id,  customer_id):
         input_dict = {"SERVICE":"CHECKIN", "store_id":store_id, "customer_id": customer_id}
-        return requests.post(url = "http://localhost:8080/queueweb/", data = input_dict)
+        return requests.post(url = self.QUEUEWEB_LOCATION, data = input_dict)
 
 
 if __name__ == '__main__':
