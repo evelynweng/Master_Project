@@ -100,7 +100,7 @@ class queue_manager:
         else:
             entry_or_not = True
             print('No need for wait, we do have space for you')
-        return False
+            return True
 
     def validate_checkin(self, store_id, customer_id):
         try:

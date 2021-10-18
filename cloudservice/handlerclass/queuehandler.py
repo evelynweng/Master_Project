@@ -15,15 +15,16 @@ class queueHandler:
         if not store_id:
             return {kREPLY:False, kCUSTOMERNUMBERS:0}
         verify_checkin = input_dict
-        reply_dict = dataHandler.get_queue_dictresponse(verify_checkin)
+        reply_dict = dataHandler().get_queue_dictresponse(verify_checkin)
         return reply_dict
     
-
+    '''
     def get_qrcode(self, store_id) -> str:
         get_qrcode_dict = {keyService: qrCode, keyStoreid: store_id, }
         encode_qrcode_string = 'need to process'
         return encode_qrcode_string
-    
+    ''' 
+
     def store_in_out(self, store_id, store_in) -> int :
         if store_id:
             stores = Store.objects.filter(store_id = store_id)
@@ -35,10 +36,16 @@ class queueHandler:
                 else:
                     if(store.store_current_count - 1 < 0):
                         store.store_current_count = 0
+                        store.save()
                     else:
                         store.store_current_count -= 1
-                    store.save()
+                        store.save()
+                        
+                        # send request to queue
+                        send_dict = {kSERVICE:vLEAVE, kSTOREID:store_id}
+                        q_reply = dataHandler().get_queue_dictresponse(send_dict)
                 return store.store_current_count
+                
             else:
                 return -999
     

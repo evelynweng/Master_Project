@@ -53,8 +53,9 @@ vSTOREINOUT = 'store_in_out'
 vGET_TEMP_REQ = 'temp_request'
 vTEMP_DATA = 'temp_data'
 
-# Database API replated
+# To queue system
 vQUERYCAPACITY = 'ENTRY'
+vLEAVE = 'LEAVE'
 
 # value for PIR sensor - store in/out
 vSTOREIN = 'True'
