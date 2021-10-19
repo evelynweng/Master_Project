@@ -7,7 +7,7 @@ class QueueValidator:
     def __init__(self, store_id, customers):
         self.store_id = store_id
         self.customers = customers
-        self.HOSTADDRESS = "http://192.168.0.15:8080"
+        self.HOSTADDRESS = "http://localhost:8080"
         self.API_LOCATION  = self.HOSTADDRESS + "/cloudservice/"
         self.QUEUEWEB_LOCATION = self.HOSTADDRESS + "/queueweb/"
 

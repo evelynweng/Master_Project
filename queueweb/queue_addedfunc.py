@@ -44,52 +44,58 @@ class queue_manager:
         # if queue.first_Customerueue_id == queue.last_Customerueue_id:
         #    return render(request, 'test.html') 
         # find the customer who is the first in queue
-            customer_enter = Customer.objects.get(queue = queue, Customerueue_id = queue.first_Customerueue_id + 1)
-            if diff < customer_enter.number_of_people:
-                print('not enough room!')
+            try:
+                customer_enter = Customer.objects.get(queue = queue, Customerueue_id = queue.first_Customerueue_id + 1)
+                if diff < customer_enter.number_of_people:
+                    print('not enough room!')
+                    return False
+                else:
+                    print("i am going to let poeple in")
+                    cus_q_id_tmp = customer_enter.Customerueue_id
+                    # get the qualified customer's join time and get access time to calculate the actual waiting time
+                    customer_enter.time_get_access = timezone.now()
+                    customer_enter.Customerueue_id = -2
+
+
+                    siteaddress = queue_manager().WEBSITEHOST+ reverse('customer_status',kwargs={'store_name_slug':store_tmp.slug, 'customer_id':customer_enter.id})
+                    message_to_send = 'Thanks '+ customer_enter.first_name + ' for your waiting. You can now entry ' +store_tmp.store_name +' and your ticket can be checked at this link: '+ siteaddress
+                    try:
+                        self.send_sms(message_to_send,'8478044651')
+                    except:
+                        print('Unable to send the SMS to the given number')
+                    # customer_enter.send_ticket() - haven't add this function
+                    customer_enter.save()
+                    queue.first_Customerueue_id += 1
+                    decreased_time = customer_enter.number_of_people * store_tmp.store_average_waiting_time_for_person
+
+                    #queue.current_customer_in_store += customer_enter.number_of_people
+                    queue.current_waiting_time = queue.current_waiting_time - decreased_time
+                    queue.number_people_waiting = queue.number_people_waiting - customer_enter.number_of_people
+                    queue.save()
+
+                    # update all customer in the queue for their potential wait time
+                    while cus_q_id_tmp < queue.last_Customerueue_id:
+                        cus_next = Customer.objects.get(queue = queue, Customerueue_id = cus_q_id_tmp + 1)
+                        cus_next.potential_wait_time = cus_next.potential_wait_time - decreased_time
+                        cus_next.save()
+                        cus_q_id_tmp += 1
+                    print('finished inform the customer')
+                    return True
+            except:
+                print('no available customer in the queue, please check again')
                 return False
-            else:
-                print("i am going to let poeple in")
-                cus_q_id_tmp = customer_enter.Customerueue_id
-                # get the qualified customer's join time and get access time to calculate the actual waiting time
-                customer_enter.time_get_access = timezone.now()
-                customer_enter.Customerueue_id = -2
-
-
-                siteaddress = queue_manager().WEBSITEHOST+ reverse('customer_status',kwargs={'store_name_slug':store_tmp.slug, 'customer_id':customer_enter.id})
-                message_to_send = 'Thanks '+ customer_enter.first_name + ' for your waiting. You can now entry ' +store_tmp.store_name +' and your ticket can be checked at this link: '+ siteaddress
-                try:
-                    self.send_sms(message_to_send,'8478044651')
-                except:
-                    print('Unable to send the SMS to the given number')
-                # customer_enter.send_ticket() - haven't add this function
-                customer_enter.save()
-                queue.first_Customerueue_id += 1
-                decreased_time = customer_enter.number_of_people * store_tmp.store_average_waiting_time_for_person
-
-                #queue.current_customer_in_store += customer_enter.number_of_people
-                queue.current_waiting_time = queue.current_waiting_time - decreased_time
-                queue.number_people_waiting = queue.number_people_waiting - customer_enter.number_of_people
-                queue.save()
-
-                # update all customer in the queue for their potential wait time
-                while cus_q_id_tmp < queue.last_Customerueue_id:
-                    cus_next = Customer.objects.get(queue = queue, Customerueue_id = cus_q_id_tmp + 1)
-                    cus_next.potential_wait_time = cus_next.potential_wait_time - decreased_time
-                    cus_next.save()
-                    cus_q_id_tmp += 1
-                print('finished inform the customer')
-            return True
 
     def update_waiting_queue(self,store_id):
         store_interested = Store.objects.get(store_id = store_id)
         queue_current = Queue.objects.get_or_create(store = store_interested,queuedate=datetime.date.today())[0] ## might need to use time zone instead of today funciton
         
         customer_waiting = 0
-        for customer_tmp in Customer.objects.filter(Customerueue_id = -2, store = store_interested, queue = queue_current):
+        list_tmp = Customer.objects.filter(Customerueue_id = -2, store = store_interested, queue = queue_current)
+        for customer_tmp in list_tmp:
+            #print("I am here!")
             threshold_time = customer_tmp.time_get_access + datetime.timedelta(minutes = self.buffer_checkin_confirm_time)
             if threshold_time > timezone.now():
-                customer_waiting = +customer_tmp.number_of_people 
+                customer_waiting += customer_tmp.number_of_people 
             else:
                 customer_tmp.Customerueue_id = -4
                 customer_tmp.save()

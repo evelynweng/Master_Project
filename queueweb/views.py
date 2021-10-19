@@ -61,6 +61,10 @@ def advertiment_list_by_store(store_tmp):
     advertisement_list = Advertisement.objects.filter(store_id = store_tmp, start_date__lte=timezone.now(),end_date__gte=timezone.now() )
     return advertisement_list
 
+def discounts_information(store_tmp):
+    discounts_info = PromoCode.objects.filter(store_id = store_tmp, start_date__lte=timezone.now(),end_date__gte=timezone.now(), is_active = True)
+    return discounts_info
+
 def real_waiting_time(customer):
     timediff = (customer.time_get_access - customer.join_time)
     timediff = timediff.seconds//60
@@ -115,6 +119,8 @@ def queue_status(request, store_name_slug):
         context_dict['store'] = store_tmp
 
         context_dict['advertisements'] = advertiment_list_by_store(store_tmp)
+
+        context_dict['promocodes'] = discounts_information(store_tmp)
         
 
     except store_tmp.DoesNotExist:
@@ -428,7 +434,9 @@ def Customeruery(request):
         elif service == 'LEAVE':
             store_id = req_dict.get('store_id')
             invited_or_not = queue_manager().update_queue(store_id)
-            return HttpResponse("The server knows people has left, and we have checked the store")        
+            overall_return_dict = {"REPLY":invited_or_not}
+            json_string = json.dumps(overall_return_dict)
+            return HttpResponse(json_string, content_type =  "text/html; charset=utf-8")     
         elif service == 'CHECKIN':
             store_id = req_dict.get('store_id')
             customer_id = req_dict.get('customer_id')
