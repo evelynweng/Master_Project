@@ -25,3 +25,4 @@ conda
 conda-manager
 opencv-python
 tensorflow
+twilio>=6.32.0
