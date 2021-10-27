@@ -54,6 +54,9 @@ class Store(models.Model):
     password = models.CharField(max_length=30, null=False,default='')
     is_email_verified = models.BooleanField(default=False)
     profile_pic = models.ImageField(default = 'default.jpg' , upload_to = profile_pic_path)
+    
+    slug = models.SlugField(unique=True)
+    store_current_count = models.PositiveIntegerField(default = 0)
 
     # for thermal sensor task 
     thermal_task_queue = models.IntegerField(default=0)
@@ -110,7 +113,7 @@ class Queue(models.Model):
 
 class Advertisement(models.Model):  
     ads_image_path = 'queueweb/media/'
-    store_id = models.ForeignKey(Store, on_delete = models.CASCADE, to_field='store_id')
+    store_id = models.ForeignKey(Store, on_delete = models.CASCADE, to_field='store_id', default=0)
     ad_id =  models.AutoField(primary_key=True)
     discount = models.IntegerField(default=0,
         validators=[MaxValueValidator(100), MinValueValidator(0)]) #in percentage
@@ -125,6 +128,7 @@ class Advertisement(models.Model):
             store_id=self.store_id,
             ad_id=self.ad_id, 
             ad_code=self.ad_code
+        )
 
 class Customer(models.Model):
     store = models.ForeignKey(Store, on_delete = models.CASCADE)
@@ -143,7 +147,7 @@ class Customer(models.Model):
 
     def __str__(self):
         return self.phone
-            )
+        
 
 class PromoCode(models.Model):
     store_id = models.ForeignKey(Store, on_delete = models.CASCADE)
