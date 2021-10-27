@@ -80,7 +80,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'cloud295.wsgi.application'
 
-
+#For sending confirmation email
+EMAIL_USE_TLS = True
+EMAIL_FROM_USER = 'smartccs19@gmail.com'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'smartccs19@gmail.com'
+EMAIL_HOST_PASSWORD = 'sccs@123'
+EMAIL_PORT = 587
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
@@ -144,7 +151,7 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 
-MEDIA_DIR = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 MEDIA_ROOT = MEDIA_DIR

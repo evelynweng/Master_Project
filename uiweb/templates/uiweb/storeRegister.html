@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
-    <div class = ' card content-section col-md-4'>
+    <div class = ' card content-section col-md-4 mx-auto shadow p-3 mb-5 bg-white rounded'>
         <form method ="POST" action  = "">
             {%csrf_token %}
             <fieldset class = "form-group">
@@ -10,7 +10,7 @@
                 {{form | crispy}}
             </fieldset>
             <div class ='form-group'>
-                <button class="btn btn-outline-info" type="submit">Submit</button>
+                <button class="btn btn-outline-dark" type="submit">Submit</button>
             </div>
         </form> 
         <div class = "border-top pt-3">
@@ -21,9 +21,3 @@
     </div>
 
 {% endblock content %}
-
-
-<!-- fields = (store_name','owner_first_name','owner_last_name','store_phone','email','store_url','store_address','store_capacity','password')
-widgets = {
-    'store_name': TextInput(attrs={'placeholder': 'Name'}),
-} -->
