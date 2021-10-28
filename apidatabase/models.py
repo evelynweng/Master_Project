@@ -107,9 +107,13 @@ class Queue(models.Model):
     #         self.current_customer_in_store = self.store.capacity
     #     super(Queue,self).save(*args, **kwargs)
         
+    # def __str__(self):
+    #     """Make the representation of a Queue object readable."""
+    #     return "{store_id}:{customer_id}".format(store_id=self.store_id, customer_id=self.customer_id)
+    
+    # Modified queue class return by xm
     def __str__(self):
-        """Make the representation of a Queue object readable."""
-        return "{store_id}:{customer_id}".format(store_id=self.store_id, customer_id=self.customer_id)
+        return str(self.queuedate)
 
 class Advertisement(models.Model):  
     ads_image_path = 'queueweb/media/'
