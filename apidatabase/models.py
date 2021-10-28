@@ -56,6 +56,7 @@ class Store(models.Model):
     profile_pic = models.ImageField(default = 'default.jpg' , upload_to = profile_pic_path)
     
     slug = models.SlugField(unique=True)
+    store_average_waiting_time_for_person = models.IntegerField(default=0)
     store_current_count = models.PositiveIntegerField(default = 0)
 
     # for thermal sensor task 
