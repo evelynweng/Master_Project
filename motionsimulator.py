@@ -7,7 +7,7 @@ class MotionSimulator:
     def __init__(self, store_id, customers):
         self.store_id = store_id
         self.customers = customers
-        self.API_LOCATION  = sys_API_LOCATION
+        self.API_LOCATION  = awsadd+"cloudservice/"
 
     def enter_the_store(self):
         send_dict = {
@@ -28,7 +28,7 @@ class MotionSimulator:
         }
         
         res = self.send_post_request(send_dict)
-        self.send_post_request_toqueueweb(send_dict) # added by XM for illustration purpose
+        #self.send_post_request_toqueueweb(send_dict) # added by XM for illustration purpose
         return self.get_httpreponse_current_customers(res)
     
     def send_post_request(self,input_dict):

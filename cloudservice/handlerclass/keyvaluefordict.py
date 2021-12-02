@@ -5,7 +5,7 @@ keyvalue same as database column
 '''
 # system
 localadd = "http://localhost:8080/"
-awsadd = "http://54.183.135.106:8080/"
+awsadd = "http://13.52.180.123:8080/"
 selectnet = localadd
 sys_API_LOCATION = selectnet + "cloudservice/"
 sys_Q_API_LOCATION = selectnet + "queueweb/"
