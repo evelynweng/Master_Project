@@ -13,7 +13,7 @@ import json
 import requests
 import numpy as np
 import cv2
-from apidatabase.models import Store, Queue
+from apidatabase.models import Store, Queue, VaccinationCard
 
 import threading
 import time
@@ -177,12 +177,10 @@ class doService:
             print("put task fail")
     
     def save_vaccination_card_into_store(self, input_dict):
-        store_id = self.datahandler.get_store_id(input_dict)
+        this_store_id = self.datahandler.get_store_id(input_dict)
         vac_card_imgstr = input_dict.get(keyMaskpic,None)
-        stores = Store.objects.filter(store_id = store_id)
-        store = stores.get()
-        store.vaccination_card = vac_card_imgstr
-        store.save()
+        vac_card_obj = VaccinationCard (store_id= this_store_id, vaccination_card=vac_card_imgstr)
+        vac_card_obj.save()
         print("save vaccimage: ", type(vac_card_imgstr))
 
 class BoolToken:
