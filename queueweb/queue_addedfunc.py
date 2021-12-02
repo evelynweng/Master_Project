@@ -30,7 +30,7 @@ class queue_manager:
         self.TWILIO_ACCOUNT_SID = 'ACf2bc86b8d33e00d3d4b3eb74c60ab12a'
         self.TWILIO_NUMBER = '15075775291'
         self.TWILIO_AUTH_TOKEN = 'b2ef349f51c89f134f0fbd12606d1233'
-        self.WEBSITEHOST = 'http://192.168.0.15:8080'
+        self.WEBSITEHOST = 'http://13.52.180.123:8080'
 
     def update_queue(self, store_id):
         store_tmp = Store.objects.get(store_id = store_id)

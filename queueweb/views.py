@@ -74,7 +74,7 @@ def real_waiting_time(customer):
 def generate_qrcode(store_id):
     store_tmp = Store.objects.get(store_id=store_id)
         # currently firstpart is xm's ipaddress + app name
-    firstpart = 'http://localhost:8000/queueweb/store/'
+    firstpart = 'http://13.52.180.123:8080/queueweb/store/'
     secondpart = store_tmp.slug
     qrcode_url = firstpart + secondpart
     img = qrcode.make(qrcode_url)
