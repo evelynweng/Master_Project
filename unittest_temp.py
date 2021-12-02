@@ -18,12 +18,11 @@ def get_httpreponse_content(input_dict):
 
 
 class TestCloudservice(unittest.TestCase):
-    '''
+    
     def test_register_true(self):
-        input_dict =  {kREPLY:True, kSTOREID: 1}
+        input_dict =  {kREPLY:True, kSTOREID: 6}
         expect_result = get_httpreponse_content(input_dict)
         test_result = BuidTestServiceRequest().register_true()
-        print("send")
         self.assertEqual(test_result, expect_result)
     
     
@@ -38,7 +37,7 @@ class TestCloudservice(unittest.TestCase):
         expect_result = get_httpreponse_content(input_dict)
         test_result = BuidTestServiceRequest().login_false()
         self.assertEqual(test_result, expect_result)
-    '''
+    
     def test_mask_true(self):
         input_dict = {kREPLY:True, kQRCODE:None}
         expect_result = get_httpreponse_content(input_dict)
@@ -46,7 +45,7 @@ class TestCloudservice(unittest.TestCase):
 
         # print(get_test.content)
         self.assertEqual(test_result, expect_result)
-    '''
+    
     #currently will fail because not put in qrcode img
     def test_mask_false(self):
         input_dict = {kREPLY:False, kQRCODE:None}
@@ -69,8 +68,31 @@ class TestCloudservice(unittest.TestCase):
         test_result = BuidTestServiceRequest().startdetect_false()
         #print(get_test.content)
         self.assertEqual(test_result, expect_result)
-    '''
     
+    def test_getteask(self):
+        input_dict = {kREPLY:True}
+        expect_result = get_httpreponse_content(input_dict)
+        test_result = BuidTestServiceRequest().get_task_from_cloud()
+        #print(get_test.content)
+        self.assertEqual(test_result, expect_result)
+    
+    def test_send_temp(self):
+        input_dict = {kREPLY:True}
+        expect_result = get_httpreponse_content(input_dict)
+        test_result = BuidTestServiceRequest().send_temperature_to_cloud()
+        self.assertEqual(test_result, expect_result)
+   
+    def test_enter(self):
+        input_dict = {kREPLY:True}
+        expect_result = get_httpreponse_content(input_dict)
+        test_result = BuidTestServiceRequest().enter_the_store()
+        self.assertEqual(test_result, expect_result)
+    def test_leave(self):
+        input_dict = {kREPLY:True}
+        expect_result = get_httpreponse_content(input_dict)
+        test_result = BuidTestServiceRequest().enter_the_store()
+        self.assertEqual(test_result, expect_result)
+
     
 class BuidTestServiceRequest:
     def __init__(self):
@@ -97,10 +119,10 @@ class BuidTestServiceRequest:
         send_dict =  {
             kVALID : 295, 
             kSERVICE: vREGISTER,
-            kSTOREPHONE:self.STOREPHONE,
+            kSTOREPHONE:"2234522",
             kPASSWORD: self.PASSWORD, 
-            kSTORENAME: self.STORENAME,
-            kSTORECAPACITY: self.STORECAPACITY
+            kSTORENAME: "Target",
+            kSTORECAPACITY: 10
             }
         return self.send_post_request_and_get_response_content(send_dict)
 
@@ -138,6 +160,41 @@ class BuidTestServiceRequest:
             }
         return self.send_post_request_and_get_response_content(send_dict)
     
+    def get_task_from_cloud(self) -> bool :
+        send_dict = {
+            kVALID: vVALID,
+            kSERVICE: vGET_TEMP_REQ,
+            kSTOREID: self.STOREID,
+        }
+        return self.send_post_request_and_get_response_content(send_dict)
+
+    def send_temperature_to_cloud (self):
+        send_dict = {
+            kVALID: vVALID,
+            kSTOREID: self.STOREID,
+            kSERVICE: vTEMP_DATA,
+            kTEMP_DATA:"36"
+        }
+        return self.send_post_request_and_get_response_content(send_dict)
+    
+    def enter_the_store(self):
+        send_dict = {
+            kVALID: vVALID,
+            kSERVICE: vSTOREINOUT,
+            kSTOREID:self.STOREID,
+            kSTOREINOUT:vSTOREIN
+        }
+        return self.send_post_request_and_get_response_content(send_dict)
+
+    def leave_the_store(self):
+        send_dict = {
+            kVALID: vVALID,
+            kSERVICE: vSTOREINOUT,
+            kSTOREID:self.store_id,
+            kSTOREINOUT:vSTOREOUT
+        }
+        return self.send_post_request_and_get_response_content(send_dict)
+
     # helper
     def send_post_request_and_get_response_content(self,input_dict):
         return requests.post(url = self.API_LOCATION, data = input_dict).content

@@ -94,6 +94,7 @@ class doService:
         store_in = self.datahandler.get_store_in_out(input_dict)
         current_customers = self.queuehandler.store_in_out(store_id, store_in)
         reply_dict = {'count': current_customers}
+        # reply_dict = {kREPLY:True} 
         return self.datahandler.dict_to_HttpResponse(reply_dict)
     
     def do_get_temperature_request(self, input_dict) -> HttpResponse:

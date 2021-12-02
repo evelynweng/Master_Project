@@ -4,9 +4,12 @@ store_id=1, store_name="KFC", store_phone =' 12345678', password = 'testpwd'
 keyvalue same as database column
 '''
 # system
-sys_API_LOCATION = "http://localhost:8080/cloudservice/"
-sys_Q_API_LOCATION = "http://localhost:8080/queueweb/"
-sys_DATABASE_API_LOCATION = "http://localhost:8080/apidatabase/"
+localadd = "http://localhost:8080/"
+awsadd = "http://54.183.135.106:8080/"
+selectnet = localadd
+sys_API_LOCATION = selectnet + "cloudservice/"
+sys_Q_API_LOCATION = selectnet + "queueweb/"
+sys_DATABASE_API_LOCATION =  selectnet + "apidatabase/"
 
 # key for dict:
 kVALID = 'CMPE295'
