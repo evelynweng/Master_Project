@@ -4,7 +4,7 @@ store_id=1, store_name="KFC", store_phone =' 12345678', password = 'testpwd'
 keyvalue same as database column
 '''
 # server
-IPServer = "http://152.44.182.251:8080/cloudservice/"
+IPServer = "http://13.52.180.123:8080/cloudservice/"
 
 # key for dict:
 kVALID = 'CMPE295'
