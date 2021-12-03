@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from apidatabase.models import Store, Queue, Customer,Advertisement, PromoCode
+from apidatabase.models import *
 
 # add in this class to customise the admin interface
 class storeAdmin(admin.ModelAdmin):
@@ -16,4 +16,5 @@ admin.site.register(Queue)
 admin.site.register(Advertisement)
 admin.site.register(Customer, CustomerAdmin)
 admin.site.register(PromoCode)
+admin.site.register(VaccinationCard)
 
