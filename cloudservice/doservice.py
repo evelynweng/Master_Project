@@ -179,7 +179,9 @@ class doService:
     def save_vaccination_card_into_store(self, input_dict):
         this_store_id = self.datahandler.get_store_id(input_dict)
         vac_card_imgstr = input_dict.get(keyMaskpic,None)
-        vac_card_obj = VaccinationCard (store_id= this_store_id, vaccination_card=vac_card_imgstr)
+        stores = Store.objects.filter(store_id = this_store_id)
+        store = stores.get()
+        vac_card_obj = VaccinationCard (store_id= store, vaccination_card=vac_card_imgstr)
         vac_card_obj.save()
         print("save vaccimage: ", type(vac_card_imgstr))
 
