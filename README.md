@@ -6,7 +6,7 @@ sudo apt-get update && \
   python3 get-pip.py;
 ```
 
-   - (Optional) Creaet virtual environments and activate it.
+   - (Optional) Create virtual environments and activate it.
 ```
 python3 -m venv venv
 source venv/bin/activate
