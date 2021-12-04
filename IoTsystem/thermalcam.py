@@ -15,6 +15,7 @@ mlx_shape = (24,32)
 
 
 def thermal_cam_main():
+    print("start temperature thread")
     t_cam =  thermalcamSend()
     #thermalstr = "36,36"
     while True:
