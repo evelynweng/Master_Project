@@ -1,5 +1,5 @@
 ﻿# Cloud295 Server
-1. Install Install Python3 and pip3
+1. Install Python3 and pip3
 ```
 sudo apt-get update && \
   sudo apt-get install python3 && \
